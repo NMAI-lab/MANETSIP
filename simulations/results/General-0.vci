@@ -1,0 +1,294 @@
+file 17499 1468268035                                           
+version 2
+run General-0-20160711-16:13:12-29883
+attr configname General
+attr datetime 20160711-16:13:12
+attr experiment General
+attr inifile omnetpp.ini
+attr iterationvars ""
+attr iterationvars2 $repetition=0
+attr measurement ""
+attr network Scenario
+attr processid 29883
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+param **.constraintAreaMaxX 1000m
+param **.constraintAreaMaxY 1000m
+param **.constraintAreaMaxZ 0m
+param **.constraintAreaMinX 0m
+param **.constraintAreaMinY 0m
+param **.constraintAreaMinZ 0m
+param **.host*.ac_wlan.interfaces "\"wlan0\""
+param **.host*.mobility.changeAngleBy "normal(0deg, 30deg)"
+param **.host*.mobility.changeInterval "truncnormal(2s, 0.5s)"
+param **.host*.mobility.initFromDisplayString false
+param **.host*.mobility.speed "truncnormal(20mps, 8mps)"
+param **.host*.mobility.updateInterval 100ms
+param **.host*.mobilityType "\"MassMobility\""
+param **.numUdpApps 1
+param **.udpApp[0].destAddresses "\"host[0]\""
+param **.udpApp[0].destPort 9001
+param **.udpApp[0].localPort 9001
+param **.udpApp[0].messageLength 100B
+param **.udpApp[0].sendInterval "uniform(10s, 30s)"
+param **.udpApp[0].startTime "uniform(10s, 30s)"
+param **.udpApp[0].typename "\"UDPBasicApp\""
+param **.wlan[*].bitrate 2Mbps
+param **.wlan[*].mac.address "\"auto\""
+param **.wlan[*].mac.cwMinBroadcast 31
+param **.wlan[*].mac.cwMinData 7
+param **.wlan[*].mac.maxQueueSize 14
+param **.wlan[*].mac.retryLimit 7
+param **.wlan[*].mac.rtsThresholdBytes 3000B
+param **.wlan[*].mgmt.frameCapacity 10
+param **.wlan[*].mgmtType "\"Ieee80211MgmtAdhoc\""
+param **.wlan[*].radio.receiver.sensitivity -85dBm
+param **.wlan[*].radio.receiver.snirThreshold 4dB
+param **.wlan[*].radio.transmitter.power 2mW
+param *.hosts 4
+
+vector 21  Scenario.host[0].wlan[0].mac.ctn[0]  state:vector  ETV
+attr interpolationmode  none
+attr source  stateChanged
+attr title  "contention state, vector"
+vector 43  Scenario.host[1].wlan[0].mac.ctn[0]  state:vector  ETV
+attr interpolationmode  none
+attr source  stateChanged
+attr title  "contention state, vector"
+vector 65  Scenario.host[2].wlan[0].mac.ctn[0]  state:vector  ETV
+attr interpolationmode  none
+attr source  stateChanged
+attr title  "contention state, vector"
+vector 87  Scenario.host[3].wlan[0].mac.ctn[0]  state:vector  ETV
+attr interpolationmode  none
+attr source  stateChanged
+attr title  "contention state, vector"
+vector 17  Scenario.host[0].wlan[0].radio  radioMode:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioModeChanged
+attr title  "Radio mode, vector"
+vector 20  Scenario.host[0].wlan[0].radio  radioChannel:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioChannelChanged
+attr title  "Radio channel, vector"
+vector 39  Scenario.host[1].wlan[0].radio  radioMode:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioModeChanged
+attr title  "Radio mode, vector"
+vector 42  Scenario.host[1].wlan[0].radio  radioChannel:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioChannelChanged
+attr title  "Radio channel, vector"
+vector 61  Scenario.host[2].wlan[0].radio  radioMode:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioModeChanged
+attr title  "Radio mode, vector"
+vector 64  Scenario.host[2].wlan[0].radio  radioChannel:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioChannelChanged
+attr title  "Radio channel, vector"
+vector 83  Scenario.host[3].wlan[0].radio  radioMode:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioModeChanged
+attr title  "Radio mode, vector"
+vector 86  Scenario.host[3].wlan[0].radio  radioChannel:vector  ETV
+attr interpolationmode  sample-hold
+attr source  radioChannelChanged
+attr title  "Radio channel, vector"
+vector 18  Scenario.host[0].wlan[0].radio  receptionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  receptionStateChanged
+attr title  "Radio reception state, vector"
+vector 40  Scenario.host[1].wlan[0].radio  receptionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  receptionStateChanged
+attr title  "Radio reception state, vector"
+vector 62  Scenario.host[2].wlan[0].radio  receptionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  receptionStateChanged
+attr title  "Radio reception state, vector"
+vector 84  Scenario.host[3].wlan[0].radio  receptionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  receptionStateChanged
+attr title  "Radio reception state, vector"
+vector 67  Scenario.host[3].udpApp[0]  sentPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  sentPk
+attr title  "packets sent, vector(packetBytes)"
+vector 69  Scenario.host[3].udp  sentPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  sentPk
+attr title  "packets sent, vector(packetBytes)"
+vector 74  Scenario.host[3].networkLayer.arp  sentReq:vector  ETV
+attr title  "ARP request sent, vector"
+vector 81  Scenario.host[3].wlan[0].mac  rcvdPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetReceivedFromUpper
+attr title  "packets received from higher layer, vector(packetBytes)"
+vector 80  Scenario.host[3].wlan[0].mac  sentDownPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToLower
+attr title  "packets sent to lower layer, vector(packetBytes)"
+vector 85  Scenario.host[3].wlan[0].radio  transmissionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  transmissionStateChanged
+attr title  "Radio transmission state, vector"
+vector 1  Scenario.host[0].udpApp[0]  sentPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  sentPk
+attr title  "packets sent, vector(packetBytes)"
+vector 3  Scenario.host[0].udp  sentPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  sentPk
+attr title  "packets sent, vector(packetBytes)"
+vector 11  Scenario.host[0].lo0.lo  rcvdPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetReceivedFromUpper
+attr title  "packets received from higher layer, vector(packetBytes)"
+vector 12  Scenario.host[0].lo0.lo  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 4  Scenario.host[0].udp  rcvdPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rcvdPk
+attr title  "packets received, vector(packetBytes)"
+vector 5  Scenario.host[0].udp  passedUpPk:vector(count)  ETV
+attr interpolationmode  none
+attr title  "packets passed up, vector(count)"
+vector 0  Scenario.host[0].udpApp[0]  rcvdPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  rcvdPk
+attr title  "packets received, vector(packetBytes)"
+vector 2  Scenario.host[0].udpApp[0]  rcvdPkLifetime:vector  ETV
+attr interpolationmode  none
+attr source  messageAge(rcvdPk)
+attr title  "received packet lifetime, vector"
+attr unit  s
+vector 23  Scenario.host[1].udpApp[0]  sentPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  sentPk
+attr title  "packets sent, vector(packetBytes)"
+vector 25  Scenario.host[1].udp  sentPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  sentPk
+attr title  "packets sent, vector(packetBytes)"
+vector 30  Scenario.host[1].networkLayer.arp  sentReq:vector  ETV
+attr title  "ARP request sent, vector"
+vector 37  Scenario.host[1].wlan[0].mac  rcvdPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetReceivedFromUpper
+attr title  "packets received from higher layer, vector(packetBytes)"
+vector 36  Scenario.host[1].wlan[0].mac  sentDownPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToLower
+attr title  "packets sent to lower layer, vector(packetBytes)"
+vector 41  Scenario.host[1].wlan[0].radio  transmissionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  transmissionStateChanged
+attr title  "Radio transmission state, vector"
+vector 16  Scenario.host[0].wlan[0].mac  rcvdPkFromLL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetReceivedFromLower
+attr title  "packets received from lower layer, vector(packetBytes)"
+vector 13  Scenario.host[0].wlan[0].mac  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 9  Scenario.host[0].networkLayer.arp  sentReply:vector  ETV
+attr title  "ARP replies sent, vector"
+vector 15  Scenario.host[0].wlan[0].mac  rcvdPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetReceivedFromUpper
+attr title  "packets received from higher layer, vector(packetBytes)"
+vector 14  Scenario.host[0].wlan[0].mac  sentDownPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToLower
+attr title  "packets sent to lower layer, vector(packetBytes)"
+vector 19  Scenario.host[0].wlan[0].radio  transmissionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  transmissionStateChanged
+attr title  "Radio transmission state, vector"
+vector 38  Scenario.host[1].wlan[0].mac  rcvdPkFromLL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetReceivedFromLower
+attr title  "packets received from lower layer, vector(packetBytes)"
+vector 35  Scenario.host[1].wlan[0].mac  passedUpPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToUpper
+attr title  "packets passed to higher layer, vector(packetBytes)"
+vector 45  Scenario.host[2].udpApp[0]  sentPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  sentPk
+attr title  "packets sent, vector(packetBytes)"
+vector 47  Scenario.host[2].udp  sentPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  sentPk
+attr title  "packets sent, vector(packetBytes)"
+vector 52  Scenario.host[2].networkLayer.arp  sentReq:vector  ETV
+attr title  "ARP request sent, vector"
+vector 59  Scenario.host[2].wlan[0].mac  rcvdPkFromHL:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetReceivedFromUpper
+attr title  "packets received from higher layer, vector(packetBytes)"
+vector 58  Scenario.host[2].wlan[0].mac  sentDownPk:vector(packetBytes)  ETV
+attr interpolationmode  none
+attr source  packetSentToLower
+attr title  "packets sent to lower layer, vector(packetBytes)"
+vector 63  Scenario.host[2].wlan[0].radio  transmissionState:vector  ETV
+attr interpolationmode  sample-hold
+attr source  transmissionStateChanged
+attr title  "Radio transmission state, vector"
+0	10565 53 980 1069 22.055267407559 22.473135507392 2 100 100 200 20000
+1	10618 26 973 973 22.055267407559 22.055267407559 1 100 100 100 10000
+2	10644 62 980 1069 22.055267407559 22.473135507392 2 0 0.001861579443 0.001861579443 3.4654780226002e-06
+3	10706 26 975 975 22.055267407559 22.055267407559 1 108 108 108 11664
+4	10732 53 979 1068 22.055267407559 22.473135507392 2 108 108 216 23328
+5	10785 49 979 1068 22.055267407559 22.473135507392 2 1 2 3 5
+9	10834 25 1017 1017 22.471324454423 22.471324454423 1 1 1 1 1
+11	10859 27 977 977 22.055267407559 22.055267407559 1 128 128 128 16384
+12	10886 27 977 977 22.055267407559 22.055267407559 1 128 128 128 16384
+13	10913 55 1014 1065 22.471324454423 22.473135507392 2 64 164 228 30992
+14	10968 54 1024 1072 22.471414454423 22.473145507392 2 14 64 78 4292
+15	11022 27 1020 1020 22.471324454423 22.471324454423 1 64 64 64 4096
+16	11049 82 1014 1065 22.471324454423 22.473135507392 3 14 164 242 31188
+17	11131 122 0 1081 0 22.473449507392 6 0 3 12 30
+18	11253 269 0 1081 0 22.473449507392 11 0 3 15 33
+19	11522 208 1025 1081 22.471414454423 22.473449507392 8 0 2 8 12
+20	11730 9 0 0 0 0 1 0 0 0 0
+21	11739 608 0 1081 0 22.473449507392 26 0 3 22 62
+23	12347 27 997 997 22.471273927949 22.471273927949 1 100 100 100 10000
+25	12374 27 999 999 22.471273927949 22.471273927949 1 108 108 108 11664
+30	12401 26 1000 1000 22.471273927949 22.471273927949 1 1 1 1 1
+35	12427 25 1033 1033 22.4718629809 22.4718629809 1 64 64 64 4096
+36	12452 78 1005 1056 22.471273927949 22.4722869809 3 14 164 242 31188
+37	12530 53 1003 1038 22.471273927949 22.4718629809 2 64 164 228 30992
+38	12583 50 1033 1083 22.4718629809 22.4734500339 2 14 64 78 4292
+39	12633 166 0 1063 0 22.4731349809 8 0 3 17 43
+40	12799 253 0 1082 0 22.4734500339 11 0 3 12 24
+41	13052 296 1006 1063 22.471273927949 22.4731349809 12 0 2 12 18
+42	13348 9 0 0 0 0 1 0 0 0 0
+43	13357 728 0 1083 0 22.4734500339 32 0 3 44 116
+45	14085 27 1312 1312 27.83546003513 27.83546003513 1 100 100 100 10000
+47	14112 27 1314 1314 27.83546003513 27.83546003513 1 108 108 108 11664
+52	14139 75 1315 1430 27.83546003513 29.83546003513 3 1 1 3 3
+58	14214 78 1320 1435 27.83546003513 29.83546003513 3 64 64 192 12288
+59	14292 78 1318 1433 27.83546003513 29.83546003513 3 64 64 192 12288
+61	14370 168 0 1442 0 29.83551003513 8 0 3 17 43
+62	14538 159 0 1442 0 29.83551003513 7 0 1 4 4
+63	14697 300 1321 1442 27.83546003513 29.83551003513 12 0 2 12 18
+64	14997 9 0 0 0 0 1 0 0 0 0
+65	15006 786 0 1442 0 29.83551003513 34 0 3 48 132
+67	15792 27 816 816 19.553302233107 19.553302233107 1 100 100 100 10000
+69	15819 27 818 818 19.553302233107 19.553302233107 1 108 108 108 11664
+74	15846 75 819 935 19.553302233107 21.553302233107 3 1 1 3 3
+80	15921 78 824 940 19.553302233107 21.553302233107 3 64 64 192 12288
+81	15999 78 822 938 19.553302233107 21.553302233107 3 64 64 192 12288
+83	16077 168 0 947 0 21.553352233107 8 0 3 17 43
+84	16245 159 0 947 0 21.553352233107 7 0 1 4 4
+85	16404 300 825 947 19.553302233107 21.553352233107 12 0 2 12 18
+86	16704 9 0 0 0 0 1 0 0 0 0
+87	16713 786 0 947 0 21.553352233107 34 0 3 48 132
