@@ -18,7 +18,7 @@
 
 package p2psipmanet.simulations;
 
-import inet.physicallayer.ieee80211.packetlevel.Ieee80211ScalarRadioMedium;
+import inet.world.radio.ChannelControl;
 import p2psipmanet.Host;
 
 network Scenario
@@ -27,6 +27,6 @@ network Scenario
         double hosts;
 
     submodules:
-        radioMedium: Ieee80211ScalarRadioMedium;
+        channelControl: ChannelControl;
         host[hosts]: Host;
 }

@@ -1,18 +1,17 @@
 #
-# OMNeT++/OMNEST Makefile for P2PSIPMANET
+# OMNeT++/OMNEST Makefile for p2psipmanet
 #
 # This file was generated with the command:
-#  opp_makemake -f --deep -L/home/omnetpp/omnetpp-5.0/samples/inet/out/$$\(CONFIGNAME\)/src -lINET -DINET_IMPORT -KINET_PROJ=/home/omnetpp/omnetpp-5.0/samples/inet
+#  opp_makemake -f --deep -L../../inetmanet-2.0/out/$$\(CONFIGNAME\)/src -linet -DINET_IMPORT -KINETMANET_2_0_PROJ=../../inetmanet-2.0 -KOVERSIM_20121206_PROJ=../../Oversim-20121206
 #
 
 # Name of target to be created (-o option)
-TARGET = P2PSIPMANET$(EXE_SUFFIX)
+TARGET = p2psipmanet$(EXE_SUFFIX)
 
 # User interface (uncomment one) (-u option)
-USERIF_LIBS = $(ALL_ENV_LIBS) # that is, $(TKENV_LIBS) $(QTENV_LIBS) $(CMDENV_LIBS)
+USERIF_LIBS = $(ALL_ENV_LIBS) # that is, $(TKENV_LIBS) $(CMDENV_LIBS)
 #USERIF_LIBS = $(CMDENV_LIBS)
 #USERIF_LIBS = $(TKENV_LIBS)
-#USERIF_LIBS = $(QTENV_LIBS)
 
 # C++ include paths (with -I)
 INCLUDE_PATH = -I.
@@ -21,25 +20,23 @@ INCLUDE_PATH = -I.
 EXTRA_OBJS =
 
 # Additional libraries (-L, -l options)
-LIBS = -L$(INET_PROJ)/out/$(CONFIGNAME)/src  -lINET
-LIBS += -Wl,-rpath,`abspath $(INET_PROJ)/out/$(CONFIGNAME)/src`
+LIBS = -L../../inetmanet-2.0/out/$(CONFIGNAME)/src  -linet
+LIBS += -Wl,-rpath,`abspath ../../inetmanet-2.0/out/$(CONFIGNAME)/src`
 
 # Output directory
 PROJECT_OUTPUT_DIR = ../out
 PROJECTRELATIVE_PATH = src
 O = $(PROJECT_OUTPUT_DIR)/$(CONFIGNAME)/$(PROJECTRELATIVE_PATH)
 
-# Object files for local .cc, .msg and .sm files
+# Object files for local .cc and .msg files
 OBJS =
 
 # Message files
 MSGFILES =
 
-# SM files
-SMFILES =
-
 # Other makefile variables (-K)
-INET_PROJ=/home/omnetpp/omnetpp-5.0/samples/inet
+INETMANET_2_0_PROJ=../../inetmanet-2.0
+OVERSIM_20121206_PROJ=../../Oversim-20121206
 
 #------------------------------------------------------------------------------
 
@@ -67,7 +64,6 @@ OMNETPP_LIBS = -L"$(OMNETPP_LIB_SUBDIR)" -L"$(OMNETPP_LIB_DIR)" -loppmain$D $(US
 
 COPTS = $(CFLAGS) -DINET_IMPORT $(INCLUDE_PATH) -I$(OMNETPP_INCL_DIR)
 MSGCOPTS = $(INCLUDE_PATH)
-SMCOPTS =
 
 # we want to recompile everything if COPTS changes,
 # so we store COPTS into $COPTS_FILE and have object
@@ -94,7 +90,7 @@ $O/$(TARGET): $(OBJS)  $(wildcard $(EXTRA_OBJS)) Makefile
 	@echo Creating executable: $@
 	$(Q)$(CXX) $(LDFLAGS) -o $O/$(TARGET)  $(OBJS) $(EXTRA_OBJS) $(AS_NEEDED_OFF) $(WHOLE_ARCHIVE_ON) $(LIBS) $(WHOLE_ARCHIVE_OFF) $(OMNETPP_LIBS)
 
-.PHONY: all clean cleanall depend msgheaders smheaders
+.PHONY: all clean cleanall depend msgheaders
 
 .SUFFIXES: .cc
 
@@ -107,26 +103,20 @@ $O/%.o: %.cc $(COPTS_FILE)
 	$(qecho) MSGC: $<
 	$(Q)$(MSGC) -s _m.cc $(MSGCOPTS) $?
 
-%_sm.cc %_sm.h: %.sm
-	$(qecho) SMC: $<
-	$(Q)$(SMC) -c++ -suffix cc $(SMCOPTS) $?
-
 msgheaders: $(MSGFILES:.msg=_m.h)
-
-smheaders: $(SMFILES:.sm=_sm.h)
 
 clean:
 	$(qecho) Cleaning...
 	$(Q)-rm -rf $O
-	$(Q)-rm -f P2PSIPMANET P2PSIPMANET.exe libP2PSIPMANET.so libP2PSIPMANET.a libP2PSIPMANET.dll libP2PSIPMANET.dylib
-	$(Q)-rm -f ./*_m.cc ./*_m.h ./*_sm.cc ./*_sm.h
+	$(Q)-rm -f p2psipmanet p2psipmanet.exe libp2psipmanet.so libp2psipmanet.a libp2psipmanet.dll libp2psipmanet.dylib
+	$(Q)-rm -f ./*_m.cc ./*_m.h
 
 cleanall: clean
 	$(Q)-rm -rf $(PROJECT_OUTPUT_DIR)
 
 depend:
 	$(qecho) Creating dependencies...
-	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES) $(SM_CC_FILES)  ./*.cc
+	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES)  ./*.cc
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 
