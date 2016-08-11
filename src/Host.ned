@@ -57,7 +57,7 @@ module Host extends NodeBase
         @node;
         @display("bgb=537,472;i=device/cellphone;i2=block/circle_s");
         networkLayer.configurator.networkConfiguratorModule = ""; // parameter for IPv4NetworkLayer (the default value of networkLayer)
-        string routingProtocol = default("OLSR");
+        string routingProtocol = default("inet.networklayer.manetrouting.OLSR");
         IPForward = true;
         wlan[*].mgmtType = default("Ieee80211MgmtAdhoc");
         numRadios = default(1);
@@ -69,7 +69,7 @@ module Host extends NodeBase
         tier3: <tier3Type> like ITier {
             parameters:
                 @display("p=96,44");
-        }
+       }
         tier2: <tier2Type> like ITier {
             parameters:
                 @display("p=202,44");
@@ -90,12 +90,17 @@ module Host extends NodeBase
             parameters:
                 @display("p=255,225");
         }
+        
+        neighborCache: NeighborCache { //needed along with bootstraplist
+            parameters:
+                @display("p=179,305");
+        }
 
         bootstrapList: BootstrapList {
             parameters:
                 @display("p=168,311");
         }
-        cryptoModule: CryptoModule {
+        cryptoModule: CryptoModule { //needed with neighborcache
             parameters:
                 @display("p=158,248");
         }
@@ -108,8 +113,8 @@ module Host extends NodeBase
             @display("p=471,287");
         }
     connections allowunconnected:
-        networkLayer.ifOut++ --> lo0.upperLayerIn;
-        lo0.upperLayerOut --> networkLayer.ifIn++;
+        //networkLayer.ifOut++ --> lo0.upperLayerIn;
+        //lo0.upperLayerOut --> networkLayer.ifIn++;
 
         tier1.to_lowerTier --> overlay.appIn if numTiers>0;
         tier1.from_lowerTier <-- overlay.appOut if numTiers>0;
@@ -123,9 +128,9 @@ module Host extends NodeBase
         tier2.udpOut --> udp.appIn++ if numTiers>1;
         udp.appOut++ --> tier2.udpIn if numTiers>1;
         tier2.tcpOut --> tcp.appIn++ if numTiers>1;
-        tcp.appOut++ --> tier2.tcpIn if numTiers>1;
+       tcp.appOut++ --> tier2.tcpIn if numTiers>1;
 
-        tier3.to_lowerTier --> tier2.from_upperTier if numTiers > 2;
+       tier3.to_lowerTier --> tier2.from_upperTier if numTiers > 2;
         tier3.from_lowerTier <-- tier2.to_upperTier if numTiers > 2;
         tier3.udpOut --> udp.appIn++ if numTiers>2;
         udp.appOut++ --> tier3.udpIn if numTiers>2;

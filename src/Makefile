@@ -2,7 +2,7 @@
 # OMNeT++/OMNEST Makefile for p2psipmanet
 #
 # This file was generated with the command:
-#  opp_makemake -f --deep -L../../inetmanet-2.0/out/$$\(CONFIGNAME\)/src -linet -DINET_IMPORT -KINETMANET_2_0_PROJ=../../inetmanet-2.0 -KOVERSIM_20121206_PROJ=../../Oversim-20121206
+#  opp_makemake -f --deep -I../../Oversim-20121206/src/common -I../../inetmanet-2.0/src/networklayer/common -I../../inetmanet-2.0/src/transport/tcp/queues -I../../inetmanet-2.0/src/linklayer/ieee80211mesh/locator -I../../inetmanet-2.0/src/linklayer/ieee80211/radio/errormodel -I../../inetmanet-2.0/src/world/radio -I../../inetmanet-2.0/src/networklayer/icmpv6 -I../../Oversim-20121206/src/overlay/pastry -I../../inetmanet-2.0/src/networklayer/arp -I../../inetmanet-2.0/src/linklayer/ethernet -I../../Oversim-20121206/src/underlay/singlehostunderlay -I../../inetmanet-2.0/src/networklayer/contract -I../../inetmanet-2.0/src/transport/sctp -I../../Oversim-20121206/src/underlay/simpleunderlay -I../../inetmanet-2.0/src/networklayer/routing/aodv -I../../inetmanet-2.0/src/mobility/contract -I../../inetmanet-2.0/src/transport/udp -I../../inetmanet-2.0/src/transport/tcp -I../../inetmanet-2.0/src/util/headerserializers/ipv6 -I../../inetmanet-2.0/src/world/powercontrol -I../../inetmanet-2.0/src/linklayer/ieee80211/radio -I../../inetmanet-2.0/src/util -I../../inetmanet-2.0/src/networklayer/manetrouting/dsr -I../../inetmanet-2.0/src/util/headerserializers/ipv4 -I../../inetmanet-2.0/src -I../../inetmanet-2.0/src/networklayer/ipv4 -I../../inetmanet-2.0/src/linklayer/radio -I../../inetmanet-2.0/src/wpan/linklayer/ieee802154/mac -I../../inetmanet-2.0/src/world/obstacles -I../../inetmanet-2.0/src/battery/models -I../../inetmanet-2.0/src/wpan/linklayer/ieee802154/contract -I../../inetmanet-2.0/src/linklayer/ieee80211/mac -I../../inetmanet-2.0/src/wpan/linklayer/bmac -I../../inetmanet-2.0/src/linklayer/radio/propagation -I../../inetmanet-2.0/src/networklayer/ipv6tunneling -I../../inetmanet-2.0/src/linklayer/ieee80211/mgmt -I../../inetmanet-2.0/src/networklayer/ipv6 -I../../Oversim-20121206/src/common/cbr -I../../inetmanet-2.0/src/util/headerserializers/tcp -I../../Oversim-20121206/src/common/cbr/globalViewBuilder -I../../inetmanet-2.0/src/mobility/common -I../../inetmanet-2.0/src/util/headerserializers/udp -I../../Oversim-20121206/src/applications/dht -I../../inetmanet-2.0/src/applications/pingapp -I../../inetmanet-2.0/src/util/headerserializers/sctp -I../../inetmanet-2.0/src/linklayer/common -I../../inetmanet-2.0/src/transport/contract -I../../inetmanet-2.0/src/networklayer/autorouting/ipv4 -I../../inetmanet-2.0/src/networklayer/manetrouting/base -I../../inetmanet-2.0/src/transport/tcp_common -I../../inetmanet-2.0/src/linklayer/contract -I../../inetmanet-2.0/src/base -I../../inetmanet-2.0/src/networklayer/xmipv6 -I../../inetmanet-2.0/src/wpan/phyLayer/ieee802154 -I../../inetmanet-2.0/src/status -I../../inetmanet-2.0/src/util/headerserializers -I../../inetmanet-2.0/src/wpan/networklayer/contract -L../../inetmanet-2.0/out/$$\(CONFIGNAME\)/src -L../../Oversim-20121206/out/$$\(CONFIGNAME\)/src -linet -lOversim-20121206 -DINET_IMPORT -KINETMANET_2_0_PROJ=../../inetmanet-2.0 -KOVERSIM_20121206_PROJ=../../Oversim-20121206
 #
 
 # Name of target to be created (-o option)
@@ -14,14 +14,72 @@ USERIF_LIBS = $(ALL_ENV_LIBS) # that is, $(TKENV_LIBS) $(CMDENV_LIBS)
 #USERIF_LIBS = $(TKENV_LIBS)
 
 # C++ include paths (with -I)
-INCLUDE_PATH = -I.
+INCLUDE_PATH = \
+    -I../../Oversim-20121206/src/common \
+    -I../../inetmanet-2.0/src/networklayer/common \
+    -I../../inetmanet-2.0/src/transport/tcp/queues \
+    -I../../inetmanet-2.0/src/linklayer/ieee80211mesh/locator \
+    -I../../inetmanet-2.0/src/linklayer/ieee80211/radio/errormodel \
+    -I../../inetmanet-2.0/src/world/radio \
+    -I../../inetmanet-2.0/src/networklayer/icmpv6 \
+    -I../../Oversim-20121206/src/overlay/pastry \
+    -I../../inetmanet-2.0/src/networklayer/arp \
+    -I../../inetmanet-2.0/src/linklayer/ethernet \
+    -I../../Oversim-20121206/src/underlay/singlehostunderlay \
+    -I../../inetmanet-2.0/src/networklayer/contract \
+    -I../../inetmanet-2.0/src/transport/sctp \
+    -I../../Oversim-20121206/src/underlay/simpleunderlay \
+    -I../../inetmanet-2.0/src/networklayer/routing/aodv \
+    -I../../inetmanet-2.0/src/mobility/contract \
+    -I../../inetmanet-2.0/src/transport/udp \
+    -I../../inetmanet-2.0/src/transport/tcp \
+    -I../../inetmanet-2.0/src/util/headerserializers/ipv6 \
+    -I../../inetmanet-2.0/src/world/powercontrol \
+    -I../../inetmanet-2.0/src/linklayer/ieee80211/radio \
+    -I../../inetmanet-2.0/src/util \
+    -I../../inetmanet-2.0/src/networklayer/manetrouting/dsr \
+    -I../../inetmanet-2.0/src/util/headerserializers/ipv4 \
+    -I../../inetmanet-2.0/src \
+    -I../../inetmanet-2.0/src/networklayer/ipv4 \
+    -I../../inetmanet-2.0/src/linklayer/radio \
+    -I../../inetmanet-2.0/src/wpan/linklayer/ieee802154/mac \
+    -I../../inetmanet-2.0/src/world/obstacles \
+    -I../../inetmanet-2.0/src/battery/models \
+    -I../../inetmanet-2.0/src/wpan/linklayer/ieee802154/contract \
+    -I../../inetmanet-2.0/src/linklayer/ieee80211/mac \
+    -I../../inetmanet-2.0/src/wpan/linklayer/bmac \
+    -I../../inetmanet-2.0/src/linklayer/radio/propagation \
+    -I../../inetmanet-2.0/src/networklayer/ipv6tunneling \
+    -I../../inetmanet-2.0/src/linklayer/ieee80211/mgmt \
+    -I../../inetmanet-2.0/src/networklayer/ipv6 \
+    -I../../Oversim-20121206/src/common/cbr \
+    -I../../inetmanet-2.0/src/util/headerserializers/tcp \
+    -I../../Oversim-20121206/src/common/cbr/globalViewBuilder \
+    -I../../inetmanet-2.0/src/mobility/common \
+    -I../../inetmanet-2.0/src/util/headerserializers/udp \
+    -I../../Oversim-20121206/src/applications/dht \
+    -I../../inetmanet-2.0/src/applications/pingapp \
+    -I../../inetmanet-2.0/src/util/headerserializers/sctp \
+    -I../../inetmanet-2.0/src/linklayer/common \
+    -I../../inetmanet-2.0/src/transport/contract \
+    -I../../inetmanet-2.0/src/networklayer/autorouting/ipv4 \
+    -I../../inetmanet-2.0/src/networklayer/manetrouting/base \
+    -I../../inetmanet-2.0/src/transport/tcp_common \
+    -I../../inetmanet-2.0/src/linklayer/contract \
+    -I../../inetmanet-2.0/src/base \
+    -I../../inetmanet-2.0/src/networklayer/xmipv6 \
+    -I../../inetmanet-2.0/src/wpan/phyLayer/ieee802154 \
+    -I../../inetmanet-2.0/src/status \
+    -I../../inetmanet-2.0/src/util/headerserializers \
+    -I../../inetmanet-2.0/src/wpan/networklayer/contract \
+    -I.
 
 # Additional object and library files to link with
 EXTRA_OBJS =
 
 # Additional libraries (-L, -l options)
-LIBS = -L../../inetmanet-2.0/out/$(CONFIGNAME)/src  -linet
-LIBS += -Wl,-rpath,`abspath ../../inetmanet-2.0/out/$(CONFIGNAME)/src`
+LIBS = -L../../inetmanet-2.0/out/$(CONFIGNAME)/src -L../../Oversim-20121206/out/$(CONFIGNAME)/src  -linet -lOversim-20121206
+LIBS += -Wl,-rpath,`abspath ../../inetmanet-2.0/out/$(CONFIGNAME)/src` -Wl,-rpath,`abspath ../../Oversim-20121206/out/$(CONFIGNAME)/src`
 
 # Output directory
 PROJECT_OUTPUT_DIR = ../out
@@ -29,7 +87,7 @@ PROJECTRELATIVE_PATH = src
 O = $(PROJECT_OUTPUT_DIR)/$(CONFIGNAME)/$(PROJECTRELATIVE_PATH)
 
 # Object files for local .cc and .msg files
-OBJS =
+OBJS = $O/ZeroChurn.o $O/DummyUnderlayConfigurator.o
 
 # Message files
 MSGFILES =
@@ -119,4 +177,70 @@ depend:
 	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES)  ./*.cc
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
+$O/DummyUnderlayConfigurator.o: DummyUnderlayConfigurator.cc \
+	$(OVERSIM_20121206_PROJ)/src/common/BaseLocation.h \
+	$(OVERSIM_20121206_PROJ)/src/common/BinaryValue.h \
+	$(OVERSIM_20121206_PROJ)/src/common/ChurnGenerator.h \
+	$(OVERSIM_20121206_PROJ)/src/common/GlobalNodeList.h \
+	$(OVERSIM_20121206_PROJ)/src/common/GlobalNodeListAccess.h \
+	$(OVERSIM_20121206_PROJ)/src/common/GlobalStatistics.h \
+	$(OVERSIM_20121206_PROJ)/src/common/GlobalStatisticsAccess.h \
+	$(OVERSIM_20121206_PROJ)/src/common/HashFunc.h \
+	$(OVERSIM_20121206_PROJ)/src/common/InitStages.h \
+	$(OVERSIM_20121206_PROJ)/src/common/NodeHandle.h \
+	$(OVERSIM_20121206_PROJ)/src/common/OverlayKey.h \
+	$(OVERSIM_20121206_PROJ)/src/common/PeerInfo.h \
+	$(OVERSIM_20121206_PROJ)/src/common/PeerStorage.h \
+	$(OVERSIM_20121206_PROJ)/src/common/StringConvert.h \
+	$(OVERSIM_20121206_PROJ)/src/common/TransportAddress.h \
+	$(OVERSIM_20121206_PROJ)/src/common/UnderlayConfigurator.h \
+	$(OVERSIM_20121206_PROJ)/src/common/oversim_byteswap.h \
+	$(OVERSIM_20121206_PROJ)/src/common/oversim_mapset.h \
+	$(OVERSIM_20121206_PROJ)/src/underlay/simpleunderlay/SimpleInfo.h \
+	$(OVERSIM_20121206_PROJ)/src/underlay/simpleunderlay/SimpleNodeEntry.h \
+	$(OVERSIM_20121206_PROJ)/src/underlay/simpleunderlay/SimpleTCP.h \
+	$(OVERSIM_20121206_PROJ)/src/underlay/simpleunderlay/SimpleUDP.h \
+	$(INETMANET_2_0_PROJ)/src/base/BasicModule.h \
+	$(INETMANET_2_0_PROJ)/src/base/ByteArray.h \
+	$(INETMANET_2_0_PROJ)/src/base/ByteArray_m.h \
+	$(INETMANET_2_0_PROJ)/src/base/Compat.h \
+	$(INETMANET_2_0_PROJ)/src/base/ILifecycle.h \
+	$(INETMANET_2_0_PROJ)/src/base/INETDefs.h \
+	$(INETMANET_2_0_PROJ)/src/base/INotifiable.h \
+	$(INETMANET_2_0_PROJ)/src/base/ModuleAccess.h \
+	$(INETMANET_2_0_PROJ)/src/base/NotificationBoard.h \
+	$(INETMANET_2_0_PROJ)/src/base/NotifierConsts.h \
+	$(INETMANET_2_0_PROJ)/src/linklayer/contract/MACAddress.h \
+	$(INETMANET_2_0_PROJ)/src/networklayer/common/IInterfaceTable.h \
+	$(INETMANET_2_0_PROJ)/src/networklayer/common/InterfaceEntry.h \
+	$(INETMANET_2_0_PROJ)/src/networklayer/common/InterfaceToken.h \
+	$(INETMANET_2_0_PROJ)/src/networklayer/contract/IPv4Address.h \
+	$(INETMANET_2_0_PROJ)/src/networklayer/contract/IPv6Address.h \
+	$(INETMANET_2_0_PROJ)/src/networklayer/contract/IPvXAddress.h \
+	$(INETMANET_2_0_PROJ)/src/networklayer/contract/IPvXAddressResolver.h \
+	$(INETMANET_2_0_PROJ)/src/networklayer/ipv4/IPv4InterfaceData.h \
+	$(INETMANET_2_0_PROJ)/src/networklayer/ipv6/IPv6InterfaceData.h \
+	$(INETMANET_2_0_PROJ)/src/transport/contract/TCPCommand_m.h \
+	$(INETMANET_2_0_PROJ)/src/transport/contract/UDPControlInfo.h \
+	$(INETMANET_2_0_PROJ)/src/transport/contract/UDPControlInfo_m.h \
+	$(INETMANET_2_0_PROJ)/src/transport/tcp/TCP.h \
+	$(INETMANET_2_0_PROJ)/src/transport/tcp/TCPConnection.h \
+	$(INETMANET_2_0_PROJ)/src/transport/tcp_common/TCPSegment.h \
+	$(INETMANET_2_0_PROJ)/src/transport/tcp_common/TCPSegment_m.h \
+	$(INETMANET_2_0_PROJ)/src/transport/udp/UDP.h \
+	$(INETMANET_2_0_PROJ)/src/transport/udp/UDPPacket_m.h \
+	DummyUnderlayConfigurator.h
+$O/ZeroChurn.o: ZeroChurn.cc \
+	$(OVERSIM_20121206_PROJ)/src/common/ChurnGenerator.h \
+	$(OVERSIM_20121206_PROJ)/src/common/InitStages.h \
+	$(OVERSIM_20121206_PROJ)/src/common/TransportAddress.h \
+	$(OVERSIM_20121206_PROJ)/src/common/UnderlayConfigurator.h \
+	$(OVERSIM_20121206_PROJ)/src/common/UnderlayConfiguratorAccess.h \
+	$(OVERSIM_20121206_PROJ)/src/common/oversim_mapset.h \
+	$(INETMANET_2_0_PROJ)/src/base/Compat.h \
+	$(INETMANET_2_0_PROJ)/src/base/INETDefs.h \
+	$(INETMANET_2_0_PROJ)/src/networklayer/contract/IPv4Address.h \
+	$(INETMANET_2_0_PROJ)/src/networklayer/contract/IPv6Address.h \
+	$(INETMANET_2_0_PROJ)/src/networklayer/contract/IPvXAddress.h \
+	ZeroChurn.h
 

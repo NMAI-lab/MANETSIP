@@ -19,7 +19,13 @@
 package p2psipmanet.simulations;
 
 import inet.world.radio.ChannelControl;
+import oversim.common.TierDummy;
 import p2psipmanet.Host;
+import p2psipmanet.DummyUnderlayConfigurator;
+import p2psipmanet.ZeroChurn;
+
+import oversim.common.GlobalObserver;
+
 
 network Scenario
 {
@@ -29,4 +35,13 @@ network Scenario
     submodules:
         channelControl: ChannelControl;
         host[hosts]: Host;
+        underlayConfigurator: DummyUnderlayConfigurator{ //warning: this submodule must have this exact name for UnderlayConfiguratorAccess to work. (ugh).
+            @display("p=70,130");
+        }
+        churnGenerator: ZeroChurn {
+            @display("p=70,210,column");
+        }
+        globalObserver: GlobalObserver {
+            @display("p=70,50");
+        }
 }
