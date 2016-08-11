@@ -11,5 +11,4 @@ To install and use:
 Import all three projects (file>import>general>existing projects into workspace) from the OMNET++ IDE.
 - compile inetmanet (project > build project) then oversim, then MANETSIP (warning: it's slow, particularly for oversim).
 
-- Yay. At this point the MANETSIP project doesn't have any working simulations. 
-Hopefully I'll remember to update this when we get there.
+- Yay. At this point there is one simulation that can be set up without error. However, the Global Nodelist is not properly updated so as soon as the nodes try to set up a DHT there is an error because the bootstrap mechanism doesn't work.

@@ -1,0 +1,2 @@
+Scenario.ned: contains compound model to run a wireless network of hosts (see src).
+The hosts run a DHT in a MANET.
