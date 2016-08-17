@@ -169,7 +169,7 @@ TransportAddress* DummyUnderlayConfigurator::createNode(NodeType type,
         nameStr += "-" + convertToString<int32_t>(type.typeID);
     }
     cModule* node = moduleType->create(nameStr.c_str(), getParentModule(),
-                                       numCreated + 1, numCreated);
+                                   a    numCreated + 1, numCreated);
 
     std::string displayString;
 
