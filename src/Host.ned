@@ -55,7 +55,7 @@ module Host extends NodeBase
         int numTiers; // number of tiers
         //string routingFile = default("");
         @node;
-        @display("bgb=537,472;i=device/cellphone;i2=block/circle_s");
+        @display("bgb=537,472;i=device/cellphone");
         networkLayer.configurator.networkConfiguratorModule = ""; // parameter for IPv4NetworkLayer (the default value of networkLayer)
         string routingProtocol = default("inet.networklayer.manetrouting.OLSR");
         IPForward = true;
@@ -64,6 +64,9 @@ module Host extends NodeBase
 
 
     gates:
+        input overlayNeighborArrowIn[]; // incoming gate for visualizing overlay neighborship with connection arrows
+        output overlayNeighborArrowOut[]; // incoming gate for visualizing overlay neighborship with connection arrows
+        
 
     submodules:
         tier3: <tier3Type> like ITier {

@@ -84,7 +84,9 @@ void ManetChord::changeState(int toState)
         //FIXME: how to set nodetype context? (see churngenerator.h)
         //cObject** type_context = NULL;
 
-        info = new SimpleInfo(0, getId(), NULL);
+        //note: module info should be that of containing host module.
+
+        info = new SimpleInfo(0, getParentModule()->getParentModule()->getId(), NULL);
         //entry = new SimpleNodeEntry(this, NULL, NULL, 0, 0);
         //info->setEntry(entry);
 
