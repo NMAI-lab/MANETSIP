@@ -71,6 +71,7 @@ DummyUnderlayConfigurator::~DummyUnderlayConfigurator()
 void DummyUnderlayConfigurator::initialize(int stage)
 {
     if (stage == MIN_STAGE_UNDERLAY) {
+
         gracefulLeaveDelay = par("gracefulLeaveDelay");
         gracefulLeaveProbability = par("gracefulLeaveProbability");
 
@@ -86,9 +87,9 @@ void DummyUnderlayConfigurator::initialize(int stage)
         endTransitionTimer = new cMessage("endTransitionTimer");
 
         gettimeofday(&initStartTime, NULL);
-        //init = true;
-        //simulationEndingSoon = false;
-        //initCounter = 0;
+        init = true;
+        simulationEndingSoon = false;
+        initCounter = 0;
 
         firstNodeId = -1;
         WATCH(firstNodeId);

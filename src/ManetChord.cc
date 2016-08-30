@@ -122,7 +122,7 @@ void ManetChord::changeState(int toState)
 
         // is this the first node?
         if (bootstrapNode.isUnspecified()) {
-            // create new cord ring
+            // create new chord ring
             assert(predecessorNode.isUnspecified());
             bootstrapNode = thisNode;
             changeState(READY);
@@ -150,7 +150,7 @@ void ManetChord::changeState(int toState)
             scheduleAt(simTime() + checkPredecessorDelay,
                        checkPredecessor_timer);
         }
-
+        cout<< "[Chord::READY] " << thisNode.getIp()<<" "<<simTime()<<endl;
         // debug message
         if (debugOutput) {
             EV << "[Chord::changeState() @ " << thisNode.getIp()
