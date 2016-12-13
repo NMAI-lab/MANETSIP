@@ -35,8 +35,6 @@
 #include "Chord.h"
 #include "ManetChord.h"
 
-namespace oversim {
-
 using namespace std;
 
 Define_Module(ManetChord);
@@ -162,6 +160,3 @@ void ManetChord::changeState(int toState)
         break;
     }
 }
-
-
-}; //namespace

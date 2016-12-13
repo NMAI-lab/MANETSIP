@@ -24,10 +24,6 @@ import oversim.overlay.chord.Chord;
 import oversim.overlay.chord.ChordSuccessorList;
 import oversim.overlay.chord.ChordFingerTable;
 
-
-
-@namespace(oversim);
-
 //
 // The main module of the Chord implementation
 //

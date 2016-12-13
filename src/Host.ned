@@ -48,14 +48,17 @@ import inet.linklayer.loopback.LoopbackInterface;
 module Host extends NodeBase
 {
     parameters:
+        @class(Host);
         string overlayType; // overlay protocol compound module to use
         string tier1Type; // tier 1 application to use
         string tier2Type; // tier 2 module to use
         string tier3Type; // tier 3 module to use
         int numTiers; // number of tiers
         //string routingFile = default("");
+        
+        volatile string bgColor = default("green");
         @node;
-        @display("bgb=537,472;i=device/cellphone");
+        @display("bgb=537,472;i=device/cellphone,$bgColor");
         networkLayer.configurator.networkConfiguratorModule = ""; // parameter for IPv4NetworkLayer (the default value of networkLayer)
         string routingProtocol = default("inet.networklayer.manetrouting.OLSR");
         IPForward = true;

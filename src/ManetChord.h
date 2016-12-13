@@ -31,8 +31,6 @@
 
 #include "ChordMessage_m.h"
 
-namespace oversim {
-
 /**
  * ManetChord overlay module
  *
@@ -41,7 +39,7 @@ namespace oversim {
  *
  * @see BaseOverlay, Chord, ChordFingerTable, ChordSuccessorList
  */
-class ManetChord : public Chord
+class ManetChord : public oversim::Chord
 {
 
 
@@ -56,7 +54,5 @@ protected:
 
 
 };
-
-}; //namespace
 
 #endif
