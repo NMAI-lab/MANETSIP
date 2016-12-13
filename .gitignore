@@ -24,6 +24,10 @@ out/gcc-debug/src/P2PSIPMANET
 src/P2PSIPMANET
 src/p2psipmanet
 
+# Generated files #
+###################
+src/Makefile
+
 # Packages #
 ############
 # it's better to unpack these files and commit the raw source
