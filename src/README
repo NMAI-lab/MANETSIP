@@ -1,0 +1,3 @@
+Host: complete host model with placeholders for all network layers + overlay and 3 application layers.
+DummyUnderlayConfigurator: dummy model (does nothing) introduced for legacy compatilibilty with Oversim P2P protocol models.
+ZeroChurn: same, dummy model.
