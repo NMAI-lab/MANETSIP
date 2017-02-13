@@ -29,7 +29,7 @@ simple P2PSIPTestApp extends BaseApp
 {
     parameters:
         @class(P2PSIPTestApp);
-        string identifier;
+        string identifier = default(randomIdentifier());
         
         double testInterval @unit(s);    // time interval for DHT operations (put/get/modify)
         int testTtl;      // TTL for stored test records

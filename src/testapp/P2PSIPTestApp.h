@@ -147,6 +147,8 @@ private:
     GlobalDhtTestMap* globalDhtTestMap; /**< pointer to the GlobalDhtTestMap module */
 
     // parameters
+    const char* identifier;
+
     bool debugOutput; /**< debug output yes/no?*/
     double mean; //!< mean time interval between sending test messages
     double deviation; //!< deviation of time interval
@@ -176,6 +178,15 @@ public:
      */
     virtual ~P2PSIPTestApp();
 
+    static cNEDValue randomIdentifier(cComponent *context, cNEDValue argv[], int argc) {
+        OverlayKey key = OverlayKey::random();
+        if (argc == 1)
+            return key.toString(16).substr(0, (int) argv[0]);
+        else
+            return key.toString(16);
+    }
 };
+
+Define_NED_Function(P2PSIPTestApp::randomIdentifier,"string randomIdentifier(int length?)")
 
 #endif

@@ -30,7 +30,7 @@
 
 #include <GlobalDhtTestMap.h>
 
-#include "DHTTestApp.h"
+#include "P2PSIPTestApp.h"
 
 Define_Module(P2PSIPTestApp);
 
@@ -59,6 +59,8 @@ void P2PSIPTestApp::initializeApp(int stage)
     if (stage != MIN_STAGE_APP) return;
 
     // fetch parameters
+    identifier = par("identifier");
+
     debugOutput = par("debugOutput");
     activeNetwInitPhase = par("activeNetwInitPhase");
 
