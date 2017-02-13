@@ -17,7 +17,7 @@
 //
 
 /**
- * @file ManetEpiChord.cc
+ * @file ManetOneHopOverlay4MANET.cc
  * @author Frank Ockenfeld
  */
 
@@ -25,34 +25,30 @@
 #include <BootstrapList.h>
 #include <IterativeLookup.h>
 
-#include "EpiChordNodeList.h"
-#include "EpiChordFingerCache.h"
-#include "EpiChord.h"
-#include "EpiChordIterativeLookup.h"
+#include "OneHopOverlay4MANETNodeList.h"
+#include "OneHopOverlay4MANETCache.h"
+#include "OneHopOverlay4MANET.h"
+#include "OneHopOverlay4MANETIterativeLookup.h"
 #include <ChurnGenerator.h>
 
 #include "SimpleInfo.h"
-#include "EpiChord.h"
-#include "ManetEpiChord.h"
+#include "OneHopOverlay4MANET.h"
+#include "ManetOneHopOverlay4MANET.h"
 
 namespace oversim {
 
 using namespace std;
 
-Define_Module(ManetEpiChord);
+Define_Module(ManetOneHopOverlay4MANET);
 
 
-void ManetEpiChord::changeState(int toState)
+void ManetOneHopOverlay4MANET::changeState(int toState)
 {
     //
     // Defines tasks to be executed when a state change occurs.
     //
 
     SimpleInfo* info;
-    //SimpleNodeEntry* entry;
-
-
-
 
     switch (toState) {
     case INIT:
@@ -67,13 +63,13 @@ void ManetEpiChord::changeState(int toState)
 
         // debug message
         if (debugOutput) {
-            EV << "[EpiChord::changeState() @ " << thisNode.getIp()
+            EV << "[OneHopOverlay4MANET::changeState() @ " << thisNode.getIp()
             << " (" << thisNode.getKey().toString(16) << ")]\n"
             << "    Entered INIT stage"
             << endl;
         }
 
-        ////////////////////////////////////////// changes from epichord module
+        ////////////////////////////////////////// changes from onehopoverlay4manet module
         // create meta information
         //FIXME: typeID is zero but should allow different values for different types of Hosts. config parameter?
         //int32_t typeID =0;
@@ -86,67 +82,53 @@ void ManetEpiChord::changeState(int toState)
         //entry = new SimpleNodeEntry(this, NULL, NULL, 0, 0);
         //info->setEntry(entry);
 
-        //add node to bootstrap oracle
+        //add node to Peer list
         globalNodeList->addPeer(thisNode.getIp(), info);
 
-        ////////////////////////////////////////// end changes from epichord module
+        ////////////////////////////////////////// end changes from onehopoverlay4manet module
+        // initiate stabilize process
+        cancelEvent(stabilize_timer);
+        scheduleAt(simTime() + stabilizeDelay, stabilize_timer);
 
         getParentModule()->getParentModule()->bubble("Enter INIT state.");
         break;
 
 
-    case BOOTSTRAP:
-        EV << "inside BOOTSTRAP"<< endl;
-        state = BOOTSTRAP;
-
-        // initiate bootstrap process
-        cancelEvent(join_timer);
-        // workaround: prevent notificationBoard from taking
-        // ownership of join_timer message
-        //take(join_timer);
-        scheduleAt(simTime(), join_timer);
-
-        // debug message
-        if (debugOutput) {
-            EV << "[ManetEpiChord::changeState() @ " << thisNode.getIp()
-            << " (" << thisNode.getKey().toString(16) << ")]\n"
-            << "    Entered BOOTSTRAP stage"
-            << endl;
-        }
-        getParentModule()->getParentModule()->bubble("Enter JOIN state.");
-
-        // find a new bootstrap node and enroll to the bootstrap list
-        bootstrapNode = bootstrapList->getBootstrapNode(overlayId);
-
-        // is this the first node?
-        if (bootstrapNode.isUnspecified()) {
-            // create new epichord ring
-            assert(successorList->isEmpty());
-            assert(predecessorList->isEmpty());
-            bootstrapNode = thisNode;
-            changeState(READY);
-            updateTooltip();
-        }
-        break;
-
-
-    case READY:
-        EV << "inside READY"<< endl;
-        state = READY;
+    case JOIN:
+        state = JOIN;
 
         setOverlayReady(true);
 
-        // initiate stabilization protocol
-        cancelEvent(stabilize_timer);
-        scheduleAt(simTime() + stabilizeDelay, stabilize_timer);
-
-        // initiate finger repair protocol
+        // initiate cache flush protocol for old entries
         cancelEvent(cache_timer);
         scheduleAt(simTime() + cacheFlushDelay, cache_timer);
 
         // debug message
         if (debugOutput) {
-            EV << "[EpiChord::changeState() @ " << thisNode.getIp()
+            EV << "[ManetOneHopOverlay4MANET::changeState() @ " << thisNode.getIp()
+            << " (" << thisNode.getKey().toString(16) << ")]\n"
+            << "    Entered JOIN stage"
+            << endl;
+        }
+        getParentModule()->getParentModule()->bubble("Enter JOIN state.");
+
+        break;
+
+    case READY:
+        state = READY;
+
+        //setOverlayReady(true);
+
+        // initiate join process
+        cancelEvent(join_timer);
+        // workaround: prevent notificationBoard from taking
+        // ownership of join_timer message
+        take(join_timer);
+        scheduleAt(simTime() + joinDelay, join_timer);
+
+        // debug message
+        if (debugOutput) {
+            EV << "[OneHopOverlay4MANET::changeState() @ " << thisNode.getIp()
             << " (" << thisNode.getKey().toString(16) << ")]\n"
             << "    Entered READY stage"
             << endl;

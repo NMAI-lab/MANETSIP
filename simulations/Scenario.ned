@@ -33,13 +33,17 @@ network Scenario
         double hosts;
 
     submodules:
-        channelControl: ChannelControl;
-        host[hosts]: Host;
-        underlayConfigurator: DummyUnderlayConfigurator{ //warning: this submodule must have this exact name for UnderlayConfiguratorAccess to work. (ugh).
+        channelControl: ChannelControl {
+            @display("p=754,85");
+        }
+        host[hosts]: Host {
+            @display("p=395,89");
+        }
+        underlayConfigurator: DummyUnderlayConfigurator { //warning: this submodule must have this exact name for UnderlayConfiguratorAccess to work. (ugh).
             @display("p=70,130");
         }
         churnGenerator: ZeroChurn {
-            @display("p=70,210,column");
+            @display("p=70,218,column");
         }
         globalObserver: GlobalObserver {
             @display("p=70,50");

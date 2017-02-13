@@ -18,37 +18,39 @@
 
 package p2psipmanet;
 
-import oversim.overlay.epichord.EpiChord;
-import oversim.overlay.epichord.EpiChordFingerCache;
-import oversim.overlay.epichord.EpiChordNodeList;
+import oversim.overlay.onehopoverlay4manet.OneHopOverlay4MANET;
+import oversim.overlay.onehopoverlay4manet.OneHopOverlay4MANETCache;
+import oversim.overlay.onehopoverlay4manet.OneHopOverlay4MANETNodeList;
 import oversim.common.BaseOverlay;
 import oversim.common.IOverlay;
+import oversim.overlay.onehopoverlay4manet.OneHopOverlay4MANETNodeList;
 
 
 @namespace(oversim);
 
 //
-// The main module of the EpiChord implementation
+// The main module of the OneHopOverlay4MANET implementation
 //
-// @author Jamie Furness edited by Frank Ockenfeld
+// author Frank Ockenfeld
+// based on EpiChord.ned, by Jamie Furness
 //
-simple ManetEpiChord extends EpiChord
+simple ManetOneHopOverlay4MANET extends OneHopOverlay4MANET
 {
     parameters:
-        @class(ManetEpiChord);
+        @class(ManetOneHopOverlay4MANET);
 }
 
 
 //
-// Implementation of the EpiChord KBR overlay as described in
-// "EpiChord: Parallelizing the Chord Lookup Algorithm with Reactive Routing State Management" by B. Leong et al.
+// Implementation of the OneHopOverlay4MANET KBR overlay as described in
+// "OneHopOverlay4MANET: A one logicalhop overlay for MANETs and a single Chord Lookup Algorithm with Iterative Routing State Management" by Mohammad al Mojamed
 //
-// @author Jamie Furness
+// author Frank Ockenfeld
 //
-module ManetEpiChordModules like IOverlay
+module ManetOneHopOverlay4MANETModules like IOverlay
 {
     parameters:
-        @display("i=block/network2;bgb=434,220");
+        @display("i=block/network2;bgb=434,144");
 
     gates:
         input udpIn;   // gate from the UDP layer
@@ -59,29 +61,25 @@ module ManetEpiChordModules like IOverlay
         output appOut;    // gate to the application
 
     submodules:
-        epichord: ManetEpiChord {
+        onehopoverlay4manet: ManetOneHopOverlay4MANET {
             parameters:
                 @display("p=60,60");
         }
-        fingerCache: EpiChordFingerCache {
+        Cache: OneHopOverlay4MANETCache {
             parameters:
                 @display("p=150,60");
         }
-        successorList: EpiChordNodeList {
+        successorList: OneHopOverlay4MANETNodeList {
             parameters:
                 @display("p=240,60");
         }
-        predecessorList: EpiChordNodeList {
+        predecessorList: OneHopOverlay4MANETNodeList {
             parameters:
                 @display("p=345,60");
         }
-        cacheList: EpiChordNodeList {
-            parameters:
-                @display("p=279,144");
-        }
     connections allowunconnected:
-        udpIn --> epichord.udpIn;
-        udpOut <-- epichord.udpOut;
-        appIn --> epichord.appIn;
-        appOut <-- epichord.appOut;
+        udpIn --> onehopoverlay4manet.udpIn;
+        udpOut <-- onehopoverlay4manet.udpOut;
+        appIn --> onehopoverlay4manet.appIn;
+        appOut <-- onehopoverlay4manet.appOut;
 }

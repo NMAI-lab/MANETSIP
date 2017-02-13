@@ -55,7 +55,7 @@ module Host extends NodeBase
         int numTiers; // number of tiers
         //string routingFile = default("");
         @node;
-        @display("bgb=537,472;i=device/cellphone");
+        @display("bgb=607,485;i=device/cellphone");
         networkLayer.configurator.networkConfiguratorModule = ""; // parameter for IPv4NetworkLayer (the default value of networkLayer)
         string routingProtocol = default("inet.networklayer.manetrouting.OLSR");
         IPForward = true;
@@ -66,13 +66,13 @@ module Host extends NodeBase
     gates:
         input overlayNeighborArrowIn[]; // incoming gate for visualizing overlay neighborship with connection arrows
         output overlayNeighborArrowOut[]; // incoming gate for visualizing overlay neighborship with connection arrows
-        
+
 
     submodules:
         tier3: <tier3Type> like ITier {
             parameters:
                 @display("p=96,44");
-       }
+        }
         tier2: <tier2Type> like ITier {
             parameters:
                 @display("p=202,44");
@@ -93,22 +93,22 @@ module Host extends NodeBase
             parameters:
                 @display("p=255,225");
         }
-        
+
         neighborCache: NeighborCache { //needed along with bootstraplist
             parameters:
-                @display("p=179,305");
+                @display("p=135,256");
         }
 
         bootstrapList: BootstrapList {
             parameters:
-                @display("p=168,311");
+                @display("p=135,318");
         }
         cryptoModule: CryptoModule { //needed with neighborcache
             parameters:
-                @display("p=158,248");
+                @display("p=135,186");
         }
         ac_wlan: HostAutoConfigurator {
-            @display("p=171,335");
+            @display("p=194,318");
         }
 
         manetrouting: <routingProtocol> like IManetRouting {
@@ -131,9 +131,9 @@ module Host extends NodeBase
         tier2.udpOut --> udp.appIn++ if numTiers>1;
         udp.appOut++ --> tier2.udpIn if numTiers>1;
         tier2.tcpOut --> tcp.appIn++ if numTiers>1;
-       tcp.appOut++ --> tier2.tcpIn if numTiers>1;
+        tcp.appOut++ --> tier2.tcpIn if numTiers>1;
 
-       tier3.to_lowerTier --> tier2.from_upperTier if numTiers > 2;
+        tier3.to_lowerTier --> tier2.from_upperTier if numTiers > 2;
         tier3.from_lowerTier <-- tier2.to_upperTier if numTiers > 2;
         tier3.udpOut --> udp.appIn++ if numTiers>2;
         udp.appOut++ --> tier3.udpIn if numTiers>2;
