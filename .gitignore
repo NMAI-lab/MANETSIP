@@ -21,8 +21,6 @@ simulations/.tkenvrc
 
 out/*
 out/gcc-debug/src/P2PSIPMANET
-src/P2PSIPMANET
-src/p2psipmanet
 
 # Packages #
 ############
