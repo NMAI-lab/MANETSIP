@@ -48,7 +48,7 @@ def parselog(logfile, processed):
 if __name__ == '__main__':
     if len(sys.argv) > 1:
         with open(sys.argv[1]) as logfile:
-            with open(logfile + '.ppp', 'w') as processed:
+            with open(sys.argv[1] + '.ppp', 'w') as processed:
                 parselog(logfile, processed)
     else:
         with open('processed.log', 'w') as processed:
