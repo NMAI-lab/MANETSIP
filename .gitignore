@@ -4,7 +4,6 @@ simulations/results/*
 *.anf
 
 #eclipse and omnetpp files
-.project
 .metadata/*
 .tkenvlog
 .oppbuildspec
