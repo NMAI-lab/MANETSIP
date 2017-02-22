@@ -17,7 +17,7 @@
 //
 
 /**
- * @file GlobalDhtTestMap.h
+ * @file GlobalP2PSIPTestMap.h
  * @author Ingmar Baumgart
  */
 
@@ -30,66 +30,65 @@
 
 #include <OverlayKey.h>
 #include <BinaryValue.h>
+#include <ManetAddress.h>
 
 class GlobalStatistics;
 
-struct DHTEntry
+struct SIPEntry
 {
-    BinaryValue value;
+    IPvXAddress address;
     simtime_t endtime;
     simtime_t insertiontime;
-    friend std::ostream& operator<<(std::ostream& Stream, const DHTEntry entry);
+    friend std::ostream& operator<<(std::ostream& Stream, const SIPEntry entry);
 };
 
 /**
  * Module with a global view on all currently stored DHT records (used
- * by DHTTestApp).
+ * by P2PSIPTestApp).
  *
- * @author Ingmar Baumgart
+ * @author Ingmar Baumgart, Alexandre Cormier
  */
-class GlobalDhtTestMap : public cSimpleModule
+class GlobalP2PSIPTestMap : public cSimpleModule
 {
 public:
-    GlobalDhtTestMap();
-    ~GlobalDhtTestMap();
+    GlobalP2PSIPTestMap();
+    ~GlobalP2PSIPTestMap();
 
     /*
      * Insert a new key/value pair into global list of all currently
-     * stored DHT records.
+     * stored SIP records.
      *
-     * @param key The key of the record
-     * @param entry The value and TTL of the record
+     * @param id The id of the record
+     * @param entry The SIP record to store
      */
-    void insertEntry(const OverlayKey& key, const DHTEntry& entry);
+    void insertEntry(const std::string& id, const SIPEntry& entry);
 
     /*
-     * Returns the value and TTL for a given key from the global
-     * list of all currently stored DHT records.
+     * Returns entry for a given SIP id from the global list of all
+     * currently stored SIP records.
      *
-     * @param key The key of the record
-     * @return The value and TTL of the record, NULL if no records was found
+     * @param id The id of the record
+     * @return The entry, NULL if no records was found
      */
-    const DHTEntry* findEntry(const OverlayKey& key);
+    const SIPEntry* findEntry(const std::string& id);
 
     /*
-     * Erase the key/value pair with the given key from the global list of
-     * all currently stored DHT records.
+     * Erase the key/value pair with the given id from the global list of
+     * all currently stored SIP records.
      *
-     * @param key The key of the record
+     * @param id The id of the record
      */
-    void eraseEntry(const OverlayKey& key);
+    void eraseEntry(const std::string& id);
 
     /*
-     * Returns the key of a random currently stored DHT record from the global
-     * list of all currently stored DHT records.
+     * Returns the id of a random currently stored SIP record from the global
+     * list of all currently stored SIP records.
      *
-     * @return The key of the record, OverlayKey::UNSPECIFIED_KEY if the
-     * global list is empty
+     * @return The id of the record, null if the global list is empty
      */
-    const OverlayKey& getRandomKey();
+    const std::string* getRandomId();
 
     size_t size() { return dataMap.size(); };
-    uint32_t p2pnsNameCount;
 
 private:
     void initialize();
@@ -99,7 +98,7 @@ private:
     static const int TEST_MAP_INTERVAL = 10; /**< interval in seconds for writing periodic statistical information */
 
     GlobalStatistics* globalStatistics; /**< pointer to GlobalStatistics module in this node */
-    std::map<OverlayKey, DHTEntry> dataMap; /**< The map contains all currently stored DHT records */
+    std::map<std::string, SIPEntry> dataMap; /**< The map contains all currently stored DHT records */
     cMessage *periodicTimer; /**< timer self-message for writing periodic statistical information */
 };
 

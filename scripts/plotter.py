@@ -16,7 +16,7 @@ def plot_simtime():
 def parselog(logfile, processed):
     data={}
     for line in logfile:
-        if line.startswith("DHTTestApp:"):
+        if line.startswith("P2PSIPTestApp:"):
             tokens = line.split()
             msgtype, success, timestamp = tokens[1], tokens[2], tokens[3]
             print msgtype, success, timestamp
@@ -27,7 +27,7 @@ def parselog(logfile, processed):
             ipaddress, ts = tokens[1], tokens[2]
             data.setdefault(('Chord','ready'),[]).append(float(ts))
 
-    shape={'PUT': '^', 'GET':'o', 'Chord':'+'}
+    shape={'Register': '^', 'Resolve':'o', 'Chord':'+'}
     col={'Success':'g', 'success':'g', 'failed':'r', 'ready':'b'}
     for k in data:
         cumulx = []

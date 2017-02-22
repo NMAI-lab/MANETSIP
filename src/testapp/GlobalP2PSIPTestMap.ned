@@ -28,8 +28,8 @@ import oversim.common.IGlobalFunctions;
 // Module with a global view on all currently stored DHT records
 // (used by DHTTestApp).
 //
-simple GlobalDhtTestMap like IGlobalFunctions
+simple GlobalP2PSIPTestMap like IGlobalFunctions
 {
     parameters:
-        @display("t=GlobalDhtTestMap");
+        @display("t=GlobalP2PSIPTestMap");
 }

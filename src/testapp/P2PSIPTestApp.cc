@@ -17,7 +17,7 @@
 //
 
 /**
- * @file DHTTestApp.cc
+ * @file P2PSIPTestApp.cc
  * @author Ingmar Baumgart
  */
 
@@ -28,7 +28,7 @@
 #include <RpcMacros.h>
 #include "CommonMessages_m.h"
 
-#include <GlobalDhtTestMap.h>
+#include "GlobalP2PSIPTestMap.h"
 
 #include "P2PSIPTestApp.h"
 
@@ -38,20 +38,17 @@ using namespace std;
 
 #define REGISTER_TIMER_MSG_NAME "register_timer"
 #define RESOLVE_TIMER_MSG_NAME "resolve_timer"
-#define MOD_TIMER_MSG_NAME "mod_timer"
 
 P2PSIPTestApp::~P2PSIPTestApp()
 {
     cancelAndDelete(register_timer);
     cancelAndDelete(resolve_timer);
-    cancelAndDelete(dhttestmod_timer);
 }
 
 P2PSIPTestApp::P2PSIPTestApp()
 {
     register_timer = NULL;
     resolve_timer = NULL;
-    dhttestmod_timer = NULL;
 }
 
 void P2PSIPTestApp::initializeApp(int stage)
@@ -65,26 +62,21 @@ void P2PSIPTestApp::initializeApp(int stage)
     activeNetwInitPhase = par("activeNetwInitPhase");
 
     mean = par("testInterval");
-    p2pnsTraffic = par("p2pnsTraffic");
     deviation = mean / 10;
 
-    if (p2pnsTraffic) {
-        ttl = 3600 * 24 * 365;
-    } else {
-        ttl = par("testTtl");
-    }
+    ttl = par("testTtl");
 
     globalNodeList = GlobalNodeListAccess().get();
     underlayConfigurator = UnderlayConfiguratorAccess().get();
     globalStatistics = GlobalStatisticsAccess().get();
 
-    globalDhtTestMap =
-            dynamic_cast<GlobalDhtTestMap*>(simulation.getModuleByPath(
+    globalP2PSIPTestMap =
+            dynamic_cast<GlobalP2PSIPTestMap*>(simulation.getModuleByPath(
                     "globalObserver.globalFunctions[0].function"));
 
-    if (globalDhtTestMap == NULL) {
-        throw cRuntimeError("DHTTestApp::initializeApp(): "
-                            "GlobalDhtTestMap module not found!");
+    if (globalP2PSIPTestMap == NULL) {
+        throw cRuntimeError("P2PSIPTestApp::initializeApp(): "
+                            "GlobalP2PSIPTestMap module not found!");
     }
 
     // statistics
@@ -110,46 +102,45 @@ void P2PSIPTestApp::initializeApp(int stage)
     // initiate test message transmission
     register_timer = new cMessage(REGISTER_TIMER_MSG_NAME);
     resolve_timer = new cMessage(RESOLVE_TIMER_MSG_NAME);
-    dhttestmod_timer = new cMessage(MOD_TIMER_MSG_NAME);
 
     if (mean > 0) {
         scheduleAt(simTime() + truncnormal(mean, deviation), register_timer);
         scheduleAt(simTime() + truncnormal(mean + mean / 3, deviation),
                    resolve_timer);
-        scheduleAt(simTime() + truncnormal(mean + 2 * mean / 3, deviation),
-                   dhttestmod_timer);
     }
+
+    registerId();
 }
 
 void P2PSIPTestApp::handleRpcResponse(BaseResponseMessage* msg,
                                    const RpcState& state, simtime_t rtt)
 {
     RPC_SWITCH_START(msg)
-        RPC_ON_RESPONSE( DHTputCAPI) {
-            handlePutResponse(
+        RPC_ON_RESPONSE(DHTputCAPI) {
+            handleRegisterResponse(
                     _DHTputCAPIResponse,
-                    check_and_cast<DHTStatsContext*>(state.getContext()));
-            EV << "[DHTTestApp::handleRpcResponse()]\n"
+                    check_and_cast<P2PSIPStatsContext*>(state.getContext()));
+            EV << "[P2PSIPTestApp::handleRpcResponse()]\n"
                << "    DHT Put RPC Response received: id=" << state.getId()
                << " msg=" << *_DHTputCAPIResponse << " rtt=" << rtt << endl;
             break;
         }
         RPC_ON_RESPONSE(DHTgetCAPI)
         {
-            handleGetResponse(
+            handleResolveResponse(
                     _DHTgetCAPIResponse,
-                    check_and_cast<DHTStatsContext*>(state.getContext()));
-            EV << "[DHTTestApp::handleRpcResponse()]\n"
+                    check_and_cast<P2PSIPStatsContext*>(state.getContext()));
+            EV << "[P2PSIPTestApp::handleRpcResponse()]\n"
                << "    DHT Get RPC Response received: id=" << state.getId()
                << " msg=" << *_DHTgetCAPIResponse << " rtt=" << rtt << endl;
             break;
         }RPC_SWITCH_END()
 }
 
-void P2PSIPTestApp::handlePutResponse(DHTputCAPIResponse* msg,
-                                   DHTStatsContext* context)
+void P2PSIPTestApp::handleRegisterResponse(DHTputCAPIResponse* msg,
+                                   P2PSIPStatsContext* context)
 {
-    DHTEntry entry = { context->value, simTime() + ttl, simTime() };
+    SIPEntry entry = { context->address, simTime() + ttl, simTime() };
 
     if (context->measurementPhase == false) {
         // don't count response, if the request was not sent
@@ -158,32 +149,33 @@ void P2PSIPTestApp::handlePutResponse(DHTputCAPIResponse* msg,
         return;
     }
 
-    if (!msg->getProperlySigned()) {
-        cout << "DHTTestApp: PUT reached malicious node [t=" << simTime() << "]"
-             << endl;
-        delete context;
-        return;
-    }
+//    if (!msg->getProperlySigned()) {
+//        cout << "P2PSIPTestApp: Register reached malicious node [t=" << simTime() << "]"
+//             << endl;
+//        delete context;
+//        return;
+//    }
 
     if (msg->getIsSuccess()) {
 
         //only insert key into testmap if it was successfully put.
-        globalDhtTestMap->insertEntry(context->key, entry);
+        globalP2PSIPTestMap->insertEntry(context->id, entry);
 
-        cout << "DHTTestApp: PUT Success [t=" << simTime() << "]" << endl;
+        cout << "P2PSIPTestApp: Register Success [t=" << simTime() << "]" << endl;
         RECORD_STATS(numPutSuccess++);
-        RECORD_STATS(
-                globalStatistics->addStdDev("DHTTestApp: PUT Latency (s)", SIMTIME_DBL(simTime() - context->requestTime)));
+        RECORD_STATS(globalStatistics->addStdDev("P2PSIPTestApp: PUT Latency (s)", SIMTIME_DBL(simTime() - context->requestTime)));
+
+        cancelEvent(register_timer);
     } else {
-        cout << "DHTTestApp: PUT failed [t=" << simTime() << "]" << endl;
+        cout << "P2PSIPTestApp: Register failed [t=" << simTime() << "]" << endl;
         RECORD_STATS(numPutError++);
     }
 
     delete context;
 }
 
-void P2PSIPTestApp::handleGetResponse(DHTgetCAPIResponse* msg,
-                                   DHTStatsContext* context)
+void P2PSIPTestApp::handleResolveResponse(DHTgetCAPIResponse* msg,
+                                   P2PSIPStatsContext* context)
 {
     if (context->measurementPhase == false) {
         // don't count response, if the request was not sent
@@ -193,66 +185,60 @@ void P2PSIPTestApp::handleGetResponse(DHTgetCAPIResponse* msg,
     }
 
     RECORD_STATS(
-            globalStatistics->addStdDev("DHTTestApp: GET Latency (s)", SIMTIME_DBL(simTime() - context->requestTime)));
+            globalStatistics->addStdDev("P2PSIPTestApp: Resolve Latency (s)", SIMTIME_DBL(simTime() - context->requestTime)));
 
-    if (!msg->getProperlySigned()) {
-        cout << "DHTTestApp: GET reached malicious node [t=" << simTime() << "]"
-             << endl;
-        delete context;
-        return;
-    }
+//    if (!msg->getProperlySigned()) {
+//        cout << "P2PSIPTestApp: GET reached malicious node [t=" << simTime() << "]"
+//             << endl;
+//        delete context;
+//        return;
+//    }
 
     if (!(msg->getIsSuccess())) {
-        cout << "DHTTestApp: GET failed [t=" << simTime() << "]" << endl;
+        cout << "P2PSIPTestApp: Resolve failed [t=" << simTime() << "]" << endl;
         RECORD_STATS(numGetError++);
         delete context;
         return;
     }
 
-    const DHTEntry* entry = globalDhtTestMap->findEntry(context->key);
+    const SIPEntry* entry = globalP2PSIPTestMap->findEntry(context->id);
 
     if (entry == NULL) {
         //unexpected key
         RECORD_STATS(numGetError++);
-        cout << "DHTTestApp: GET failed [t=" << simTime() << "] unexpected key"
+        cout << "P2PSIPTestApp: Resolve failed [t=" << simTime() << "] unexpected key"
              << endl;
         delete context;
         return;
     }
 
-    if (simTime() > entry->endtime) {
+    if (false) {
         //this key doesn't exist anymore in the DHT, delete it in our hashtable
 
-        globalDhtTestMap->eraseEntry(context->key);
+        globalP2PSIPTestMap->eraseEntry(context->id);
         delete context;
 
         if (msg->getResultArraySize() > 0) {
             RECORD_STATS(numGetError++);
-            cout << "DHTTestApp: GET failed [t=" << simTime()
+            cout << "P2PSIPTestApp: Resolve failed [t=" << simTime()
                  << "] deleted key still available" << endl;
             return;
         } else {
             RECORD_STATS(numGetSuccess++);
-            cout << "DHTTestApp: GET success [t=" << simTime() << "]" << endl;
+            cout << "P2PSIPTestApp: Resolve success [t=" << simTime() << "]" << endl;
             return;
         }
     } else {
         delete context;
         if ((msg->getResultArraySize() > 0)
-                && (msg->getResult(0).getValue() == entry->value)) {
+                && (msg->getResult(0).getValue() == BinaryValue(entry->address.str()))) {
             RECORD_STATS(numGetSuccess++);
-            cout << "DHTTestApp: GET success [t=" << simTime() << "]" << endl;
+            cout << "P2PSIPTestApp: Resolve success [t=" << simTime() << "]" << endl;
             return;
         } else {
-            cout << "DHTTestApp: GET failed [t=" << simTime() << "]" << endl;
+            cout << "P2PSIPTestApp: Resolve failed [t=" << simTime() << "] wrong value"
+                 << " expected " << entry->address.str() << ", got " << msg->getResult(0).getValue() << endl;
             RECORD_STATS(numGetError++);
-#if 0
-            if (msg->getResultArraySize()) {
-                cout << "DHTTestApp: wrong value: " << msg->getResult(0).getValue() << endl;
-            } else {
-                cout << "DHTTestApp: no value" << endl;
-            }
-#endif
             return;
         }
     }
@@ -297,8 +283,8 @@ void P2PSIPTestApp::handleTraceMessage(cMessage* msg)
         sendInternalRpcCall(
                 TIER1_COMP,
                 dhtPutMsg,
-                new DHTStatsContext(globalStatistics->isMeasuring(), simTime(),
-                                    destKey, buf));
+                new P2PSIPStatsContext(globalStatistics->isMeasuring(), simTime(),
+                                    identifier, thisNode.getIp()));
     } else if (strncmp(cmd, "GET ", 4) == 0) {
         // Get key
         BinaryValue b(cmd + 4);
@@ -310,8 +296,8 @@ void P2PSIPTestApp::handleTraceMessage(cMessage* msg)
         sendInternalRpcCall(
                 TIER1_COMP,
                 dhtGetMsg,
-                new DHTStatsContext(globalStatistics->isMeasuring(), simTime(),
-                                    key));
+                new P2PSIPStatsContext(globalStatistics->isMeasuring(), simTime(),
+                                    identifier));
     } else {
         throw cRuntimeError("Unknown trace command; "
                             "only GET and PUT are allowed");
@@ -323,13 +309,7 @@ void P2PSIPTestApp::handleTraceMessage(cMessage* msg)
 
 void P2PSIPTestApp::handleTimerEvent(cMessage* msg)
 {
-    bool isPutTimer = msg->isName(REGISTER_TIMER_MSG_NAME);
     bool isGetTimer = msg->isName(RESOLVE_TIMER_MSG_NAME);
-    bool isModTimer = msg->isName(MOD_TIMER_MSG_NAME);
-
-    if (!(isPutTimer || isGetTimer || isModTimer)) {
-        return;
-    }
 
     // schedule next timer event
     scheduleAt(simTime() + truncnormal(mean, deviation), msg);
@@ -339,76 +319,40 @@ void P2PSIPTestApp::handleTimerEvent(cMessage* msg)
             || underlayConfigurator->isSimulationEndingSoon()
             || nodeIsLeavingSoon) {
         return;
-    }
-
-    if (isPutTimer) { //--------put test
-        if (p2pnsTraffic) {
-            if (isP2PNSNameCountLessThan4TimesNumNodes()) {
-                for (int i = 0; i < 4; i++) {
-                    sendRandomPut(false);
-                    globalDhtTestMap->p2pnsNameCount++;
-                }
-            }
-            cancelEvent(msg);
-        } else {
-            sendRandomPut(false);
-        }
     } else if (isGetTimer) { //--------get test
-        if (p2pnsTraffic && (uniform(0, 1) > ((double) mean / 1800.0))) {
-            return;
+        if (isRegistered()) {
+            sendRandomResolve();
         }
-        sendRandomGet();
-    } else if (isModTimer) { // ------------- modification timer
-        if (p2pnsTraffic) {
-            if (!isP2PNSNameCountLessThan4TimesNumNodes()) {
-                sendRandomPut(true);
-            }
-            cancelEvent(msg);
-        } else {
-            sendRandomPut(true);
-        }
+    } else {
+        registerId();
     }
 }
 
-bool P2PSIPTestApp::isP2PNSNameCountLessThan4TimesNumNodes()
+void P2PSIPTestApp::sendRandomResolve()
 {
-    return globalDhtTestMap->p2pnsNameCount < 4 * globalNodeList->getNumNodes();
-}
-
-void P2PSIPTestApp::sendRandomGet()
-{
-    const OverlayKey& key = globalDhtTestMap->getRandomKey();
-
-    if (key.isUnspecified()) {
-        EV << "[DHTTestApp::handleTimerEvent() @ " << thisNode.getIp() << " ("
-           << thisNode.getKey().toString(16) << ")]\n"
-           << "    Error: No key available in global DHT test map!" << endl;
+    const std::string* id = globalP2PSIPTestMap->getRandomId();
+    if (id == NULL) {
         return;
     }
 
-    DHTgetCAPICall* dhtGetMsg = new DHTgetCAPICall();
-    dhtGetMsg->setKey(key);
+    DHTgetCAPICall* resolveCall = new DHTgetCAPICall();
+    resolveCall->setKey(OverlayKey::sha1(*id));
     RECORD_STATS(numSent++; numGetSent++);
 
     sendInternalRpcCall(
             TIER1_COMP,
-            dhtGetMsg,
-            new DHTStatsContext(globalStatistics->isMeasuring(), simTime(),
-                                key));
+            resolveCall,
+            new P2PSIPStatsContext(globalStatistics->isMeasuring(), simTime(), *id));
 }
 
-void P2PSIPTestApp::sendRandomPut(bool useExistingKey)
+void P2PSIPTestApp::registerId()
 {
-    // create a put test message with random destination key
-    OverlayKey destKey =
-            useExistingKey ? globalDhtTestMap->getRandomKey() :
-                    OverlayKey::random();
-    if (destKey.isUnspecified()) {
-        return;
-    }
+    OverlayKey destKey = OverlayKey::sha1(identifier);
+    BinaryValue value(thisNode.getIp().str());
+
     DHTputCAPICall* dhtPutMsg = new DHTputCAPICall();
     dhtPutMsg->setKey(destKey);
-    dhtPutMsg->setValue(generateRandomValue());
+    dhtPutMsg->setValue(value);
     dhtPutMsg->setTtl(ttl);
     dhtPutMsg->setIsModifiable(true);
 
@@ -416,20 +360,11 @@ void P2PSIPTestApp::sendRandomPut(bool useExistingKey)
     sendInternalRpcCall(
             TIER1_COMP,
             dhtPutMsg,
-            new DHTStatsContext(globalStatistics->isMeasuring(), simTime(),
-                                destKey, dhtPutMsg->getValue()));
+            new P2PSIPStatsContext(globalStatistics->isMeasuring(), simTime(), identifier, thisNode.getIp()));
 }
 
-BinaryValue P2PSIPTestApp::generateRandomValue()
-{
-    char value[DHTTESTAPP_VALUE_LEN + 1];
-
-    for (int i = 0; i < DHTTESTAPP_VALUE_LEN; i++) {
-        value[i] = intuniform(0, 25) + 'a';
-    }
-
-    value[DHTTESTAPP_VALUE_LEN] = '\0';
-    return BinaryValue(value);
+bool P2PSIPTestApp::isRegistered() {
+    return globalP2PSIPTestMap->findEntry(identifier) != NULL;
 }
 
 void P2PSIPTestApp::handleNodeLeaveNotification()
@@ -443,25 +378,25 @@ void P2PSIPTestApp::finishApp()
 
     if (time >= GlobalStatistics::MIN_MEASURED) {
         // record scalar data
-        globalStatistics->addStdDev("DHTTestApp: Sent Total Messages/s",
+        globalStatistics->addStdDev("P2PSIPTestApp: Sent Total Messages/s",
                                     numSent / time);
-        globalStatistics->addStdDev("DHTTestApp: Sent GET Messages/s",
+        globalStatistics->addStdDev("P2PSIPTestApp: Sent Resolve Messages/s",
                                     numGetSent / time);
-        globalStatistics->addStdDev("DHTTestApp: Failed GET Requests/s",
+        globalStatistics->addStdDev("P2PSIPTestApp: Failed Resolve Requests/s",
                                     numGetError / time);
-        globalStatistics->addStdDev("DHTTestApp: Successful GET Requests/s",
+        globalStatistics->addStdDev("P2PSIPTestApp: Successful Resolve Requests/s",
                                     numGetSuccess / time);
 
-        globalStatistics->addStdDev("DHTTestApp: Sent PUT Messages/s",
+        globalStatistics->addStdDev("P2PSIPTestApp: Sent Register Messages/s",
                                     numPutSent / time);
-        globalStatistics->addStdDev("DHTTestApp: Failed PUT Requests/s",
+        globalStatistics->addStdDev("P2PSIPTestApp: Failed Register Requests/s",
                                     numPutError / time);
-        globalStatistics->addStdDev("DHTTestApp: Successful PUT Requests/s",
+        globalStatistics->addStdDev("P2PSIPTestApp: Successful Register Requests/s",
                                     numPutSuccess / time);
 
         if ((numGetSuccess + numGetError) > 0) {
             globalStatistics->addStdDev(
-                    "DHTTestApp: GET Success Ratio",
+                    "P2PSIPTestApp: Resolve Success Ratio",
                     (double) numGetSuccess
                             / (double) (numGetSuccess + numGetError));
         }

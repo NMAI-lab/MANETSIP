@@ -37,15 +37,15 @@
 #include <set>
 #include <sstream>
 
-class GlobalDhtTestMap;
+class GlobalP2PSIPTestMap;
 
 /**
- * A simple test application for the DHT layer
+ * A simple test application for P2PSIP over the DHT layer
  *
- * A simple test application that does random put and get calls
- * on the DHT layer
+ * A simple test application that does put calls for a SIP
+ * ID and random get calls on the DHT layer.
  *
- * @author Ingmar Baumgart
+ * @author Ingmar Baumgart, Alexandre Cormier
  */
 class P2PSIPTestApp: public BaseApp {
 private:
@@ -55,20 +55,23 @@ private:
      *
      * @author Ingmar Baumgart
      */
-    class DHTStatsContext: public cPolymorphic {
+    class P2PSIPStatsContext: public cPolymorphic {
     public:
         bool measurementPhase;
         simtime_t requestTime;
-        OverlayKey key;
-        BinaryValue value;
+        std::string id;
+        IPvXAddress address;
 
-        DHTStatsContext(bool measurementPhase, simtime_t requestTime,
-                const OverlayKey& key, const BinaryValue& value =
-                        BinaryValue::UNSPECIFIED_VALUE) :
-                measurementPhase(measurementPhase), requestTime(requestTime), key(
-                        key), value(value) {
+        P2PSIPStatsContext(bool measurementPhase,
+                simtime_t requestTime,
+                const std::string& id,
+                const IPvXAddress& address = IPv4Address::ALLONES_ADDRESS)
+            : measurementPhase(measurementPhase)
+            , requestTime(requestTime)
+            , id(id)
+            , address(address)
+        {
         }
-        ;
     };
 
     void initializeApp(int stage);
@@ -76,15 +79,19 @@ private:
     bool isP2PNSNameCountLessThan4TimesNumNodes();
 
     /**
-     * create a random GET message and send it
+     * create a random resolve message and send it
      */
-    void sendRandomGet();
+    void sendRandomResolve();
 
     /**
-     * create a random PUT message and send it
-     * @param useExistingKey whether to use a key that is already populated in the DHT
+     * register this node's id with the DHT
      */
-    void sendRandomPut(bool useExistingKey);
+    void registerId();
+
+    /**
+     * checks whether this node's id is registered with the DHT
+     */
+    bool isRegistered();
 
     /**
      * generate a random human readable binary value
@@ -94,26 +101,26 @@ private:
     void finishApp();
 
     /**
-     * processes get responses
+     * processes register responses
      *
      * method to handle get responses
      * should be overwritten in derived application if needed
-     * @param msg get response message
+     * @param msg resolve response message
      * @param context context object used for collecting statistics
      */
-    virtual void handleGetResponse(DHTgetCAPIResponse* msg,
-            DHTStatsContext* context);
+    virtual void handleRegisterResponse(DHTputCAPIResponse* msg,
+            P2PSIPStatsContext* context);
 
     /**
-     * processes put responses
+     * processes resolve responses
      *
      * method to handle put responses
      * should be overwritten in derived application if needed
      * @param msg put response message
      * @param context context object used for collecting statistics
      */
-    virtual void handlePutResponse(DHTputCAPIResponse* msg,
-            DHTStatsContext* context);
+    virtual void handleResolveResponse(DHTgetCAPIResponse* msg,
+            P2PSIPStatsContext* context);
 
     /**
      * processes self-messages
@@ -144,7 +151,7 @@ private:
     GlobalNodeList* globalNodeList; /**< pointer to GlobalNodeList in this node*/
 
     GlobalStatistics* globalStatistics; /**< pointer to GlobalStatistics module in this node*/
-    GlobalDhtTestMap* globalDhtTestMap; /**< pointer to the GlobalDhtTestMap module */
+    GlobalP2PSIPTestMap* globalP2PSIPTestMap; /**< pointer to the GlobalP2PSIPTestMap module */
 
     // parameters
     const char* identifier;
@@ -153,7 +160,6 @@ private:
     double mean; //!< mean time interval between sending test messages
     double deviation; //!< deviation of time interval
     int ttl; /**< ttl for stored DHT records */
-    bool p2pnsTraffic; //!< model p2pns application traffic */
     bool activeNetwInitPhase; //!< is app active in network init phase?
 
     // statistics
@@ -165,7 +171,7 @@ private:
     int numPutError; /**< number of error in put responses*/
     int numPutSuccess; /**< number of success in put responses*/
 
-    cMessage *register_timer, *resolve_timer, *dhttestmod_timer;
+    cMessage *register_timer, *resolve_timer;
     bool nodeIsLeavingSoon; //!< true if the node is going to be killed shortly
 
     static const int DHTTESTAPP_VALUE_LEN = 20;
