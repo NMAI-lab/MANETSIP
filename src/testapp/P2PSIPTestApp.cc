@@ -230,19 +230,24 @@ void P2PSIPTestApp::handleResolveResponse(DHTgetCAPIResponse* msg,
         }
     } else {
         delete context;
-        if ((msg->getResultArraySize() > 0)
-                && (msg->getResult(0).getValue() == BinaryValue(entry->address.str()))) {
-            RECORD_STATS(numGetSuccess++);
-            cout << "P2PSIPTestApp: Resolve success [t=" << simTime() << "]" << endl;
-            return;
+        if (msg->getResultArraySize() > 0) {
+            if (msg->getResult(0).getValue() == BinaryValue(entry->address.str())) {
+                RECORD_STATS(numGetSuccess++);
+                cout << "P2PSIPTestApp: Resolve success [t=" << simTime() << "]" << endl;
+                return;
+            } else {
+                cout << "P2PSIPTestApp: Resolve failed [t=" << simTime() << "] wrong value"
+                     << " expected " << entry->address.str() << ", got " << msg->getResult(0).getValue() << endl;
+                RECORD_STATS(numGetError++);
+                return;
+            }
         } else {
-            cout << "P2PSIPTestApp: Resolve failed [t=" << simTime() << "] wrong value"
-                 << " expected " << entry->address.str() << ", got " << msg->getResult(0).getValue() << endl;
+            cout << "P2PSIPTestApp: Resolve failed [t=" << simTime() << "] no result"
+                 << " expected " << entry->address.str() << endl;
             RECORD_STATS(numGetError++);
             return;
         }
     }
-
 }
 
 void P2PSIPTestApp::handleTraceMessage(cMessage* msg)
