@@ -27,8 +27,14 @@ def parselog(logfile, processed):
             ipaddress, ts = tokens[1], tokens[2]
             data.setdefault(('Chord','ready'),[]).append(float(ts))
 
-    shape={'Register': '^', 'Resolve':'o', 'Chord':'+'}
-    col={'Success':'g', 'success':'g', 'failed':'r', 'ready':'b'}
+    props = {
+        ('Register', 'success'): '^g',
+        ('Register', 'failed'): '^r',
+        ('Resolve', 'failed'): 'or',
+        ('Challenge', 'success'): 'og',
+        ('Challenge', 'failed'): 'oy',
+        ('Chord', 'ready'): '+b'
+    }
     for k in data:
         cumulx = []
         cumuly = []
@@ -39,7 +45,8 @@ def parselog(logfile, processed):
             cumulx.append(t)
             cumuly.append(cval)
             processed.write(str((t,cval))+"\t")
-        plt.plot(cumulx,cumuly, shape[k[0]]+col[k[1]])
+        if k in props:
+            plt.plot(cumulx,cumuly, props[k])
         processed.write("\n")
 
     plt.show()

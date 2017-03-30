@@ -18,7 +18,7 @@
 
 /**
  * @file P2PSIPTestApp.cc
- * @author Ingmar Baumgart
+ * @author Ingmar Baumgart, Alexandre Cormier
  */
 
 #include <IPvXAddressResolver.h>
@@ -26,7 +26,7 @@
 #include <GlobalStatisticsAccess.h>
 #include <UnderlayConfiguratorAccess.h>
 #include <RpcMacros.h>
-#include "CommonMessages_m.h"
+#include "P2PSIPTestAppMessages_m.h"
 
 #include "GlobalP2PSIPTestMap.h"
 
@@ -62,22 +62,23 @@ void P2PSIPTestApp::initializeApp(int stage)
     activeNetwInitPhase = par("activeNetwInitPhase");
 
     mean = par("testInterval");
-    deviation = mean / 10;
+    if (mean <= 0) {
+        throw cRuntimeError("P2PSIPTestApp::initializeApp(): testInterval should be > 0");
+    }
 
-    ttl = par("testTtl");
+    deviation = mean / 10;
 
     globalNodeList = GlobalNodeListAccess().get();
     underlayConfigurator = UnderlayConfiguratorAccess().get();
     globalStatistics = GlobalStatisticsAccess().get();
 
-    globalP2PSIPTestMap =
-            dynamic_cast<GlobalP2PSIPTestMap*>(simulation.getModuleByPath(
-                    "globalObserver.globalFunctions[0].function"));
+    globalP2PSIPTestMap = dynamic_cast<GlobalP2PSIPTestMap*>(simulation.getModuleByPath("globalObserver.globalFunctions[0].function"));
 
     if (globalP2PSIPTestMap == NULL) {
-        throw cRuntimeError("P2PSIPTestApp::initializeApp(): "
-                            "GlobalP2PSIPTestMap module not found!");
+        throw cRuntimeError("P2PSIPTestApp::initializeApp(): GlobalP2PSIPTestMap module not found!");
     }
+
+    bindToPort(1337);
 
     // statistics
     numSent = 0;
@@ -103,51 +104,70 @@ void P2PSIPTestApp::initializeApp(int stage)
     register_timer = new cMessage(REGISTER_TIMER_MSG_NAME);
     resolve_timer = new cMessage(RESOLVE_TIMER_MSG_NAME);
 
-    if (mean > 0) {
-        scheduleAt(simTime() + truncnormal(mean, deviation), register_timer);
-        scheduleAt(simTime() + truncnormal(mean + mean / 3, deviation),
-                   resolve_timer);
-    }
+    scheduleAt(simTime() + truncnormal(mean + mean / 3, deviation), resolve_timer);
+}
 
-    registerId();
+void P2PSIPTestApp::handleReadyMessage(CompReadyMessage* msg)
+{
+    if (msg->getReady() && msg->getComp() == OVERLAY_COMP) {
+        registerId();
+    }
+}
+
+bool P2PSIPTestApp::handleRpcCall(BaseCallMessage* msg) {
+    RPC_SWITCH_START(msg)
+        RPC_ON_CALL(SIPChallenge) {
+            handleChallengeCall(_SIPChallengeCall);
+            return true;
+        }
+    RPC_SWITCH_END()
+}
+
+void P2PSIPTestApp::handleChallengeCall(SIPChallengeCall* msg) {
+    SIPChallengeResponse* response = new SIPChallengeResponse();
+    response->setIdentifier(identifier);
+    sendRpcResponse(msg, response);
 }
 
 void P2PSIPTestApp::handleRpcResponse(BaseResponseMessage* msg,
                                    const RpcState& state, simtime_t rtt)
 {
     RPC_SWITCH_START(msg)
-        RPC_ON_RESPONSE(DHTputCAPI) {
+        RPC_ON_RESPONSE(P2pnsRegister) {
             handleRegisterResponse(
-                    _DHTputCAPIResponse,
+                    _P2pnsRegisterResponse,
                     check_and_cast<P2PSIPStatsContext*>(state.getContext()));
             EV << "[P2PSIPTestApp::handleRpcResponse()]\n"
-               << "    DHT Put RPC Response received: id=" << state.getId()
-               << " msg=" << *_DHTputCAPIResponse << " rtt=" << rtt << endl;
+               << "    P2PNS Register Response received: id=" << state.getId()
+               << " msg=" << *_P2pnsRegisterResponse << " rtt=" << rtt << endl;
             break;
         }
-        RPC_ON_RESPONSE(DHTgetCAPI)
+        RPC_ON_RESPONSE(P2pnsResolve)
         {
-            handleResolveResponse(
-                    _DHTgetCAPIResponse,
-                    check_and_cast<P2PSIPStatsContext*>(state.getContext()));
+            handleResolveResponse(_P2pnsResolveResponse, check_and_cast<P2PSIPStatsContext*>(state.getContext()));
             EV << "[P2PSIPTestApp::handleRpcResponse()]\n"
-               << "    DHT Get RPC Response received: id=" << state.getId()
-               << " msg=" << *_DHTgetCAPIResponse << " rtt=" << rtt << endl;
+               << "    P2PNS Resolve RPC Response received: id=" << state.getId()
+               << " msg=" << *_P2pnsResolveResponse << " rtt=" << rtt << endl;
             break;
-        }RPC_SWITCH_END()
+        }
+        RPC_ON_RESPONSE(SIPChallenge) {
+            handleChallengeResponse(_SIPChallengeResponse, check_and_cast<P2PSIPChallengeContext*>(state.getContext()));
+            break;
+        }
+    RPC_SWITCH_END()
 }
 
-void P2PSIPTestApp::handleRegisterResponse(DHTputCAPIResponse* msg,
+void P2PSIPTestApp::handleRegisterResponse(P2pnsRegisterResponse* msg,
                                    P2PSIPStatsContext* context)
 {
-    SIPEntry entry = { context->address, simTime() + ttl, simTime() };
+    SIPEntry entry = { context->address };
 
-    if (context->measurementPhase == false) {
-        // don't count response, if the request was not sent
-        // in the measurement phase
-        delete context;
-        return;
-    }
+//    if (context->measurementPhase == false) {
+//        // don't count response, if the request was not sent
+//        // in the measurement phase
+//        delete context;
+//        return;
+//    }
 
 //    if (!msg->getProperlySigned()) {
 //        cout << "P2PSIPTestApp: Register reached malicious node [t=" << simTime() << "]"
@@ -161,21 +181,19 @@ void P2PSIPTestApp::handleRegisterResponse(DHTputCAPIResponse* msg,
         //only insert key into testmap if it was successfully put.
         globalP2PSIPTestMap->insertEntry(context->id, entry);
 
-        cout << "P2PSIPTestApp: Register Success [t=" << simTime() << "]" << endl;
+        cout << "P2PSIPTestApp: Register success [t=" << simTime() << "]" << endl;
         RECORD_STATS(numPutSuccess++);
-        RECORD_STATS(globalStatistics->addStdDev("P2PSIPTestApp: PUT Latency (s)", SIMTIME_DBL(simTime() - context->requestTime)));
-
-        cancelEvent(register_timer);
+        RECORD_STATS(globalStatistics->addStdDev("P2PSIPTestApp: Register Latency (s)", SIMTIME_DBL(simTime() - context->requestTime)));
     } else {
         cout << "P2PSIPTestApp: Register failed [t=" << simTime() << "]" << endl;
+        scheduleAt(simTime() + truncnormal(mean, deviation), register_timer);
         RECORD_STATS(numPutError++);
     }
 
     delete context;
 }
 
-void P2PSIPTestApp::handleResolveResponse(DHTgetCAPIResponse* msg,
-                                   P2PSIPStatsContext* context)
+void P2PSIPTestApp::handleResolveResponse(P2pnsResolveResponse* msg, P2PSIPStatsContext* context)
 {
     if (context->measurementPhase == false) {
         // don't count response, if the request was not sent
@@ -212,125 +230,64 @@ void P2PSIPTestApp::handleResolveResponse(DHTgetCAPIResponse* msg,
         return;
     }
 
-    if (false) {
-        //this key doesn't exist anymore in the DHT, delete it in our hashtable
-
-        globalP2PSIPTestMap->eraseEntry(context->id);
-        delete context;
-
-        if (msg->getResultArraySize() > 0) {
-            RECORD_STATS(numGetError++);
-            cout << "P2PSIPTestApp: Resolve failed [t=" << simTime()
-                 << "] deleted key still available" << endl;
-            return;
-        } else {
+    if (msg->getAddressArraySize() > 0) {
+        string address(msg->getAddress(0).begin(), msg->getAddress(0).end());
+        if (address == entry->address.str()) {
             RECORD_STATS(numGetSuccess++);
             cout << "P2PSIPTestApp: Resolve success [t=" << simTime() << "]" << endl;
+            sendChallenge(context->id, entry->address);
+            delete context;
+            return;
+        } else {
+            cout << "P2PSIPTestApp: Resolve failed [t=" << simTime() << "] wrong value"
+                 << " expected " << entry->address.str() << ", got " << msg->getAddress(0) << endl;
+            RECORD_STATS(numGetError++);
+            delete context;
             return;
         }
     } else {
+        cout << "P2PSIPTestApp: Resolve failed [t=" << simTime() << "] no result"
+             << " expected " << entry->address.str() << endl;
+        RECORD_STATS(numGetError++);
         delete context;
-        if (msg->getResultArraySize() > 0) {
-            if (msg->getResult(0).getValue() == BinaryValue(entry->address.str())) {
-                RECORD_STATS(numGetSuccess++);
-                cout << "P2PSIPTestApp: Resolve success [t=" << simTime() << "]" << endl;
-                return;
-            } else {
-                cout << "P2PSIPTestApp: Resolve failed [t=" << simTime() << "] wrong value"
-                     << " expected " << entry->address.str() << ", got " << msg->getResult(0).getValue() << endl;
-                RECORD_STATS(numGetError++);
-                return;
-            }
-        } else {
-            cout << "P2PSIPTestApp: Resolve failed [t=" << simTime() << "] no result"
-                 << " expected " << entry->address.str() << endl;
-            RECORD_STATS(numGetError++);
-            return;
-        }
+        return;
     }
 }
 
-void P2PSIPTestApp::handleTraceMessage(cMessage* msg)
-{
-    char* cmd = new char[strlen(msg->getName()) + 1];
-    strcpy(cmd, msg->getName());
-
-    if (strlen(msg->getName()) < 5) {
-        delete[] cmd;
-        delete msg;
-        return;
-    }
-
-    if (strncmp(cmd, "PUT ", 4) == 0) {
-        // Generate key
-        char* buf = cmd + 4;
-
-        while (!isspace(buf[0])) {
-            if (buf[0] == '\0') throw cRuntimeError(
-                    "Error parsing PUT command");
-            buf++;
-        }
-
-        buf[0] = '\0';
-        BinaryValue b(cmd + 4);
-        OverlayKey destKey(OverlayKey::sha1(b));
-
-        // get value
-        buf++;
-
-        // build putMsg
-        DHTputCAPICall* dhtPutMsg = new DHTputCAPICall();
-        dhtPutMsg->setKey(destKey);
-        dhtPutMsg->setValue(buf);
-        dhtPutMsg->setTtl(ttl);
-        dhtPutMsg->setIsModifiable(true);
-        RECORD_STATS(numSent++; numPutSent++);
-        sendInternalRpcCall(
-                TIER1_COMP,
-                dhtPutMsg,
-                new P2PSIPStatsContext(globalStatistics->isMeasuring(), simTime(),
-                                    identifier, thisNode.getIp()));
-    } else if (strncmp(cmd, "GET ", 4) == 0) {
-        // Get key
-        BinaryValue b(cmd + 4);
-        OverlayKey key(OverlayKey::sha1(b));
-
-        DHTgetCAPICall* dhtGetMsg = new DHTgetCAPICall();
-        dhtGetMsg->setKey(key);
-        RECORD_STATS(numSent++; numGetSent++);
-        sendInternalRpcCall(
-                TIER1_COMP,
-                dhtGetMsg,
-                new P2PSIPStatsContext(globalStatistics->isMeasuring(), simTime(),
-                                    identifier));
+void P2PSIPTestApp::handleChallengeResponse(SIPChallengeResponse* msg, P2PSIPChallengeContext* context) {
+    cout << msg->getIdentifier() << " ------------------------------------------------------------------ " << context->id << endl;
+    if (msg->getIdentifier() == context->id) {
+        cout << "P2PSIPTestApp: Challenge success [t=" << simTime() << "]" << endl;
     } else {
-        throw cRuntimeError("Unknown trace command; "
-                            "only GET and PUT are allowed");
+        cout << "P2PSIPTestApp: Challenge failed [t=" << simTime() << "]" << endl;
     }
-
-    delete[] cmd;
-    delete msg;
+    delete context;
 }
 
 void P2PSIPTestApp::handleTimerEvent(cMessage* msg)
 {
-    bool isGetTimer = msg->isName(RESOLVE_TIMER_MSG_NAME);
-
-    // schedule next timer event
-    scheduleAt(simTime() + truncnormal(mean, deviation), msg);
+    bool isResolveTimer = msg->isName(RESOLVE_TIMER_MSG_NAME);
 
     // do nothing if the network is still in the initialization phase
     if (((!activeNetwInitPhase) && (underlayConfigurator->isInInitPhase()))
             || underlayConfigurator->isSimulationEndingSoon()
             || nodeIsLeavingSoon) {
         return;
-    } else if (isGetTimer) { //--------get test
+    } else if (isResolveTimer) { //--------get test
+        scheduleAt(simTime() + truncnormal(mean, deviation), msg);
         if (isRegistered()) {
             sendRandomResolve();
         }
     } else {
         registerId();
     }
+}
+
+void P2PSIPTestApp::sendChallenge(const string& id, const IPvXAddress& ipAddress) {
+    TransportAddress transportAddress(ipAddress, getThisNode().getPort(), getThisNode().getNatType());
+    SIPChallengeCall* challengeCall = new SIPChallengeCall();
+    P2PSIPChallengeContext* context = new P2PSIPChallengeContext(id);
+    sendUdpRpcCall(transportAddress, challengeCall, context);
 }
 
 void P2PSIPTestApp::sendRandomResolve()
@@ -340,31 +297,28 @@ void P2PSIPTestApp::sendRandomResolve()
         return;
     }
 
-    DHTgetCAPICall* resolveCall = new DHTgetCAPICall();
-    resolveCall->setKey(OverlayKey::sha1(*id));
+    P2pnsResolveCall* resolveCall = new P2pnsResolveCall();
+    resolveCall->setP2pName(BinaryValue(*id));
+
     RECORD_STATS(numSent++; numGetSent++);
 
     sendInternalRpcCall(
-            TIER1_COMP,
+            TIER2_COMP,
             resolveCall,
             new P2PSIPStatsContext(globalStatistics->isMeasuring(), simTime(), *id));
 }
 
 void P2PSIPTestApp::registerId()
 {
-    OverlayKey destKey = OverlayKey::sha1(identifier);
-    BinaryValue value(thisNode.getIp().str());
-
-    DHTputCAPICall* dhtPutMsg = new DHTputCAPICall();
-    dhtPutMsg->setKey(destKey);
-    dhtPutMsg->setValue(value);
-    dhtPutMsg->setTtl(ttl);
-    dhtPutMsg->setIsModifiable(true);
+    P2pnsRegisterCall* registerCall = new P2pnsRegisterCall();
+    registerCall->setP2pName(BinaryValue(identifier));
+    registerCall->setAddress(BinaryValue(thisNode.getIp().str()));
+    registerCall->setTtl(INT32_MAX);
 
     RECORD_STATS(numSent++; numPutSent++);
     sendInternalRpcCall(
-            TIER1_COMP,
-            dhtPutMsg,
+            TIER2_COMP,
+            registerCall,
             new P2PSIPStatsContext(globalStatistics->isMeasuring(), simTime(), identifier, thisNode.getIp()));
 }
 

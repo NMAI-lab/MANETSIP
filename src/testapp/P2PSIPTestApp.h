@@ -36,6 +36,7 @@
 #include <BaseApp.h>
 #include <set>
 #include <sstream>
+#include <P2pns.h>
 
 class GlobalP2PSIPTestMap;
 
@@ -74,6 +75,14 @@ private:
         }
     };
 
+    class P2PSIPChallengeContext: public cPolymorphic {
+    public:
+        std::string id;
+        P2PSIPChallengeContext(const std::string& id)
+        : id(id)
+        {}
+    };
+
     void initializeApp(int stage);
 
     bool isP2PNSNameCountLessThan4TimesNumNodes();
@@ -82,6 +91,11 @@ private:
      * create a random resolve message and send it
      */
     void sendRandomResolve();
+
+    /**
+     * send a challenge to an ip address to verify its sip id
+     */
+    void sendChallenge(const std::string& id, const IPvXAddress& ipAddress);
 
     /**
      * register this node's id with the DHT
@@ -108,7 +122,7 @@ private:
      * @param msg resolve response message
      * @param context context object used for collecting statistics
      */
-    virtual void handleRegisterResponse(DHTputCAPIResponse* msg,
+    virtual void handleRegisterResponse(P2pnsRegisterResponse* msg,
             P2PSIPStatsContext* context);
 
     /**
@@ -119,8 +133,12 @@ private:
      * @param msg put response message
      * @param context context object used for collecting statistics
      */
-    virtual void handleResolveResponse(DHTgetCAPIResponse* msg,
+    virtual void handleResolveResponse(P2pnsResolveResponse* msg,
             P2PSIPStatsContext* context);
+
+    void handleChallengeResponse(SIPChallengeResponse* msg, P2PSIPChallengeContext* context);
+
+    virtual void handleReadyMessage(CompReadyMessage* msg);
 
     /**
      * processes self-messages
@@ -131,20 +149,15 @@ private:
      */
     virtual void handleTimerEvent(cMessage* msg);
 
-    /**
-     * handleTraceMessage gets called of handleMessage(cMessage* msg)
-     * if a message arrives at trace_in. The command included in this
-     * message should be parsed and handled.
-     *
-     * @param msg the command message to handle
-     */
-    virtual void handleTraceMessage(cMessage* msg);
-
     virtual void handleNodeLeaveNotification();
 
+    // see BaseRpc.h
+    bool handleRpcCall(BaseCallMessage* msg);
+
+    void handleChallengeCall(SIPChallengeCall* msg);
+
     // see RpcListener.h
-    void handleRpcResponse(BaseResponseMessage* msg, const RpcState& state,
-            simtime_t rtt);
+    void handleRpcResponse(BaseResponseMessage* msg, const RpcState& state, simtime_t rtt);
 
     UnderlayConfigurator* underlayConfigurator; /**< pointer to UnderlayConfigurator in this node */
 
@@ -159,7 +172,6 @@ private:
     bool debugOutput; /**< debug output yes/no?*/
     double mean; //!< mean time interval between sending test messages
     double deviation; //!< deviation of time interval
-    int ttl; /**< ttl for stored DHT records */
     bool activeNetwInitPhase; //!< is app active in network init phase?
 
     // statistics

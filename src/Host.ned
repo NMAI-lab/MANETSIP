@@ -134,9 +134,9 @@ module Host extends NodeBase
         tier2.udpOut --> udp.appIn++ if numTiers>1;
         udp.appOut++ --> tier2.udpIn if numTiers>1;
         tier2.tcpOut --> tcp.appIn++ if numTiers>1;
-       tcp.appOut++ --> tier2.tcpIn if numTiers>1;
+        tcp.appOut++ --> tier2.tcpIn if numTiers>1;
 
-       tier3.to_lowerTier --> tier2.from_upperTier if numTiers > 2;
+        tier3.to_lowerTier --> tier2.from_upperTier if numTiers > 2;
         tier3.from_lowerTier <-- tier2.to_upperTier if numTiers > 2;
         tier3.udpOut --> udp.appIn++ if numTiers>2;
         udp.appOut++ --> tier3.udpIn if numTiers>2;

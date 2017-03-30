@@ -35,18 +35,15 @@ Define_Module(GlobalP2PSIPTestMap);
 
 std::ostream& operator<<(std::ostream& stream, const SIPEntry entry)
 {
-    return stream << "Address: " << entry.address
-                  << " Endtime: " << entry.endtime;
+    return stream << "Address: " << entry.address;
 }
 
 GlobalP2PSIPTestMap::GlobalP2PSIPTestMap()
 {
-    periodicTimer = NULL;
 }
 
 GlobalP2PSIPTestMap::~GlobalP2PSIPTestMap()
 {
-    cancelAndDelete(periodicTimer);
     dataMap.clear();
 }
 
@@ -54,26 +51,10 @@ void GlobalP2PSIPTestMap::initialize()
 {
     globalStatistics = GlobalStatisticsAccess().get();
     WATCH_MAP(dataMap);
-
-    periodicTimer = new cMessage("P2PSIPTestMapTimer");
-
-    scheduleAt(simTime(), periodicTimer);
 }
 
 void GlobalP2PSIPTestMap::finish()
 {
-}
-
-void GlobalP2PSIPTestMap::handleMessage(cMessage* msg)
-{
-    if (msg == periodicTimer) {
-        RECORD_STATS(globalStatistics->recordOutVector(
-           "GlobalP2PSIPTestMap: Number of stored DHT entries", dataMap.size()));
-        scheduleAt(simTime() + TEST_MAP_INTERVAL, msg);
-    } else {
-        throw cRuntimeError("GlobalP2PSIPTestMap::handleMessage(): "
-                                "Unknown message type!");
-    }
 }
 
 void GlobalP2PSIPTestMap::insertEntry(const std::string& id, const SIPEntry& entry)

@@ -37,8 +37,6 @@ class GlobalStatistics;
 struct SIPEntry
 {
     IPvXAddress address;
-    simtime_t endtime;
-    simtime_t insertiontime;
     friend std::ostream& operator<<(std::ostream& Stream, const SIPEntry entry);
 };
 
@@ -92,14 +90,12 @@ public:
 
 private:
     void initialize();
-    void handleMessage(cMessage* msg);
     void finish();
 
     static const int TEST_MAP_INTERVAL = 10; /**< interval in seconds for writing periodic statistical information */
 
     GlobalStatistics* globalStatistics; /**< pointer to GlobalStatistics module in this node */
     std::map<std::string, SIPEntry> dataMap; /**< The map contains all currently stored DHT records */
-    cMessage *periodicTimer; /**< timer self-message for writing periodic statistical information */
 };
 
 #endif

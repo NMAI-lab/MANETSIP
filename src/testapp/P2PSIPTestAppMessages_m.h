@@ -17,126 +17,69 @@
 
 // cplusplus {{
 #include <CommonMessages_m.h>
-#include <ManetAddress.h>
 // }}
 
 /**
- * Class generated from <tt>testapp/P2PSIPTestAppMessages.msg:33</tt> by nedtool.
+ * Class generated from <tt>testapp/P2PSIPTestAppMessages.msg:12</tt> by nedtool.
  * <pre>
- * packet SIPRegisterCall extends BaseCallMessage
+ * packet SIPChallengeCall extends BaseCallMessage
  * {
- *     string identifier;
- *     ManetAddress address;
  * }
  * </pre>
  */
-class SIPRegisterCall : public ::BaseCallMessage
+class SIPChallengeCall : public ::BaseCallMessage
 {
   protected:
-    opp_string identifier_var;
-    ManetAddress address_var;
 
   private:
-    void copy(const SIPRegisterCall& other);
+    void copy(const SIPChallengeCall& other);
 
   protected:
     // protected and unimplemented operator==(), to prevent accidental usage
-    bool operator==(const SIPRegisterCall&);
+    bool operator==(const SIPChallengeCall&);
 
   public:
-    SIPRegisterCall(const char *name=NULL, int kind=0);
-    SIPRegisterCall(const SIPRegisterCall& other);
-    virtual ~SIPRegisterCall();
-    SIPRegisterCall& operator=(const SIPRegisterCall& other);
-    virtual SIPRegisterCall *dup() const {return new SIPRegisterCall(*this);}
+    SIPChallengeCall(const char *name=NULL, int kind=0);
+    SIPChallengeCall(const SIPChallengeCall& other);
+    virtual ~SIPChallengeCall();
+    SIPChallengeCall& operator=(const SIPChallengeCall& other);
+    virtual SIPChallengeCall *dup() const {return new SIPChallengeCall(*this);}
     virtual void parsimPack(cCommBuffer *b);
     virtual void parsimUnpack(cCommBuffer *b);
 
     // field getter/setter methods
-    virtual const char * getIdentifier() const;
-    virtual void setIdentifier(const char * identifier);
-    virtual ManetAddress& getAddress();
-    virtual const ManetAddress& getAddress() const {return const_cast<SIPRegisterCall*>(this)->getAddress();}
-    virtual void setAddress(const ManetAddress& address);
 };
 
-inline void doPacking(cCommBuffer *b, SIPRegisterCall& obj) {obj.parsimPack(b);}
-inline void doUnpacking(cCommBuffer *b, SIPRegisterCall& obj) {obj.parsimUnpack(b);}
+inline void doPacking(cCommBuffer *b, SIPChallengeCall& obj) {obj.parsimPack(b);}
+inline void doUnpacking(cCommBuffer *b, SIPChallengeCall& obj) {obj.parsimUnpack(b);}
 
 /**
- * Class generated from <tt>testapp/P2PSIPTestAppMessages.msg:38</tt> by nedtool.
+ * Class generated from <tt>testapp/P2PSIPTestAppMessages.msg:15</tt> by nedtool.
  * <pre>
- * packet SIPRegisterResponse extends BaseResponseMessage
- * {
- *     string identifier;
- *     ManetAddress address;
- *     bool isSuccess;
- * }
- * </pre>
- */
-class SIPRegisterResponse : public ::BaseResponseMessage
-{
-  protected:
-    opp_string identifier_var;
-    ManetAddress address_var;
-    bool isSuccess_var;
-
-  private:
-    void copy(const SIPRegisterResponse& other);
-
-  protected:
-    // protected and unimplemented operator==(), to prevent accidental usage
-    bool operator==(const SIPRegisterResponse&);
-
-  public:
-    SIPRegisterResponse(const char *name=NULL, int kind=0);
-    SIPRegisterResponse(const SIPRegisterResponse& other);
-    virtual ~SIPRegisterResponse();
-    SIPRegisterResponse& operator=(const SIPRegisterResponse& other);
-    virtual SIPRegisterResponse *dup() const {return new SIPRegisterResponse(*this);}
-    virtual void parsimPack(cCommBuffer *b);
-    virtual void parsimUnpack(cCommBuffer *b);
-
-    // field getter/setter methods
-    virtual const char * getIdentifier() const;
-    virtual void setIdentifier(const char * identifier);
-    virtual ManetAddress& getAddress();
-    virtual const ManetAddress& getAddress() const {return const_cast<SIPRegisterResponse*>(this)->getAddress();}
-    virtual void setAddress(const ManetAddress& address);
-    virtual bool getIsSuccess() const;
-    virtual void setIsSuccess(bool isSuccess);
-};
-
-inline void doPacking(cCommBuffer *b, SIPRegisterResponse& obj) {obj.parsimPack(b);}
-inline void doUnpacking(cCommBuffer *b, SIPRegisterResponse& obj) {obj.parsimUnpack(b);}
-
-/**
- * Class generated from <tt>testapp/P2PSIPTestAppMessages.msg:44</tt> by nedtool.
- * <pre>
- * packet SIPResolveCall extends BaseCallMessage
+ * packet SIPChallengeResponse extends BaseResponseMessage
  * {
  *     string identifier;
  * }
  * </pre>
  */
-class SIPResolveCall : public ::BaseCallMessage
+class SIPChallengeResponse : public ::BaseResponseMessage
 {
   protected:
     opp_string identifier_var;
 
   private:
-    void copy(const SIPResolveCall& other);
+    void copy(const SIPChallengeResponse& other);
 
   protected:
     // protected and unimplemented operator==(), to prevent accidental usage
-    bool operator==(const SIPResolveCall&);
+    bool operator==(const SIPChallengeResponse&);
 
   public:
-    SIPResolveCall(const char *name=NULL, int kind=0);
-    SIPResolveCall(const SIPResolveCall& other);
-    virtual ~SIPResolveCall();
-    SIPResolveCall& operator=(const SIPResolveCall& other);
-    virtual SIPResolveCall *dup() const {return new SIPResolveCall(*this);}
+    SIPChallengeResponse(const char *name=NULL, int kind=0);
+    SIPChallengeResponse(const SIPChallengeResponse& other);
+    virtual ~SIPChallengeResponse();
+    SIPChallengeResponse& operator=(const SIPChallengeResponse& other);
+    virtual SIPChallengeResponse *dup() const {return new SIPChallengeResponse(*this);}
     virtual void parsimPack(cCommBuffer *b);
     virtual void parsimUnpack(cCommBuffer *b);
 
@@ -145,55 +88,8 @@ class SIPResolveCall : public ::BaseCallMessage
     virtual void setIdentifier(const char * identifier);
 };
 
-inline void doPacking(cCommBuffer *b, SIPResolveCall& obj) {obj.parsimPack(b);}
-inline void doUnpacking(cCommBuffer *b, SIPResolveCall& obj) {obj.parsimUnpack(b);}
-
-/**
- * Class generated from <tt>testapp/P2PSIPTestAppMessages.msg:48</tt> by nedtool.
- * <pre>
- * packet SIPResolveResponse extends BaseResponseMessage
- * {
- *     string identifier;
- *     ManetAddress address;
- *     bool isSuccess;
- * }
- * </pre>
- */
-class SIPResolveResponse : public ::BaseResponseMessage
-{
-  protected:
-    opp_string identifier_var;
-    ManetAddress address_var;
-    bool isSuccess_var;
-
-  private:
-    void copy(const SIPResolveResponse& other);
-
-  protected:
-    // protected and unimplemented operator==(), to prevent accidental usage
-    bool operator==(const SIPResolveResponse&);
-
-  public:
-    SIPResolveResponse(const char *name=NULL, int kind=0);
-    SIPResolveResponse(const SIPResolveResponse& other);
-    virtual ~SIPResolveResponse();
-    SIPResolveResponse& operator=(const SIPResolveResponse& other);
-    virtual SIPResolveResponse *dup() const {return new SIPResolveResponse(*this);}
-    virtual void parsimPack(cCommBuffer *b);
-    virtual void parsimUnpack(cCommBuffer *b);
-
-    // field getter/setter methods
-    virtual const char * getIdentifier() const;
-    virtual void setIdentifier(const char * identifier);
-    virtual ManetAddress& getAddress();
-    virtual const ManetAddress& getAddress() const {return const_cast<SIPResolveResponse*>(this)->getAddress();}
-    virtual void setAddress(const ManetAddress& address);
-    virtual bool getIsSuccess() const;
-    virtual void setIsSuccess(bool isSuccess);
-};
-
-inline void doPacking(cCommBuffer *b, SIPResolveResponse& obj) {obj.parsimPack(b);}
-inline void doUnpacking(cCommBuffer *b, SIPResolveResponse& obj) {obj.parsimUnpack(b);}
+inline void doPacking(cCommBuffer *b, SIPChallengeResponse& obj) {obj.parsimPack(b);}
+inline void doUnpacking(cCommBuffer *b, SIPChallengeResponse& obj) {obj.parsimUnpack(b);}
 
 
 #endif // ifndef _P2PSIPTESTAPPMESSAGES_M_H_

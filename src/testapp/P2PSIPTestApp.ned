@@ -30,11 +30,8 @@ simple P2PSIPTestApp extends BaseApp
     parameters:
         @class(P2PSIPTestApp);
         string identifier = default(randomIdentifier());
-        
-        double testInterval @unit(s);    // time interval for DHT operations (put/get/modify)
-        int testTtl;      // TTL for stored test records
+        double testInterval @unit(s) = default(5s);    // time interval for DHT operations (put/get/modify)
         bool activeNetwInitPhase;    // send messages when network is in init phase?
-        bool p2pnsTraffic; // model p2pns application traffic
 }
 
 
@@ -61,6 +58,7 @@ module P2PSIPTestAppModules like ITier
     connections allowunconnected:
         from_lowerTier --> p2psipApp.from_lowerTier;
         to_lowerTier <-- p2psipApp.to_lowerTier;
-        trace_in --> p2psipApp.trace_in;
+        udpIn --> p2psipApp.udpIn;
+        udpOut <-- p2psipApp.udpOut;
 }
 
