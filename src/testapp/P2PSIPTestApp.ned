@@ -31,6 +31,7 @@ simple P2PSIPTestApp extends BaseApp
         @class(P2PSIPTestApp);
         string identifier = default(randomIdentifier());
         double testInterval @unit(s) = default(5s);    // time interval for DHT operations (put/get/modify)
+        bool withChallenge = default(true);
         bool activeNetwInitPhase;    // send messages when network is in init phase?
 }
 

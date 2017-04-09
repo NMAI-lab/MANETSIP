@@ -57,6 +57,7 @@ void P2PSIPTestApp::initializeApp(int stage)
 
     // fetch parameters
     identifier = par("identifier");
+    withChallenge = par("withChallenge");
 
     debugOutput = par("debugOutput");
     activeNetwInitPhase = par("activeNetwInitPhase");
@@ -235,7 +236,9 @@ void P2PSIPTestApp::handleResolveResponse(P2pnsResolveResponse* msg, P2PSIPStats
         if (address == entry->address.str()) {
             RECORD_STATS(numGetSuccess++);
             cout << "P2PSIPTestApp: Resolve success [t=" << simTime() << "]" << endl;
-            sendChallenge(context->id, entry->address);
+            if (withChallenge) {
+                sendChallenge(context->id, entry->address);
+            }
             delete context;
             return;
         } else {
