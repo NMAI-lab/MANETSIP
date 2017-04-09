@@ -168,6 +168,7 @@ private:
 
     // parameters
     const char* identifier;
+    bool withChallenge;
 
     bool debugOutput; /**< debug output yes/no?*/
     double mean; //!< mean time interval between sending test messages
