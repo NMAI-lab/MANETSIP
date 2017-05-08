@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
-cd ../simulations
-../src/P2PSIPMANET -uCmdenv -c $1 -f $2 ${@:3}
+directory="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+$directory/../src/P2PSIPMANET -uCmdenv -c $1 -f $2  --seed-0-mt=`date +'%N'` ${@:3}

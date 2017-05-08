@@ -158,8 +158,7 @@ void P2PSIPTestApp::handleRpcResponse(BaseResponseMessage* msg,
     RPC_SWITCH_END()
 }
 
-void P2PSIPTestApp::handleRegisterResponse(P2pnsRegisterResponse* msg,
-                                   P2PSIPStatsContext* context)
+void P2PSIPTestApp::handleRegisterResponse(P2pnsRegisterResponse* msg, P2PSIPStatsContext* context)
 {
     SIPEntry entry = { context->address };
 
@@ -187,6 +186,7 @@ void P2PSIPTestApp::handleRegisterResponse(P2pnsRegisterResponse* msg,
         RECORD_STATS(globalStatistics->addStdDev("P2PSIPTestApp: Register Latency (s)", SIMTIME_DBL(simTime() - context->requestTime)));
     } else {
         cout << "P2PSIPTestApp: Register failed [t=" << simTime() << "]" << endl;
+        cancelEvent(register_timer); // not sure how, but sometimes it's still scheduled here...
         scheduleAt(simTime() + truncnormal(mean, deviation), register_timer);
         RECORD_STATS(numPutError++);
     }
@@ -203,8 +203,7 @@ void P2PSIPTestApp::handleResolveResponse(P2pnsResolveResponse* msg, P2PSIPStats
         return;
     }
 
-    RECORD_STATS(
-            globalStatistics->addStdDev("P2PSIPTestApp: Resolve Latency (s)", SIMTIME_DBL(simTime() - context->requestTime)));
+    RECORD_STATS(globalStatistics->addStdDev("P2PSIPTestApp: Resolve Latency (s)", SIMTIME_DBL(simTime() - context->requestTime)));
 
 //    if (!msg->getProperlySigned()) {
 //        cout << "P2PSIPTestApp: GET reached malicious node [t=" << simTime() << "]"
@@ -216,52 +215,36 @@ void P2PSIPTestApp::handleResolveResponse(P2pnsResolveResponse* msg, P2PSIPStats
     if (!(msg->getIsSuccess())) {
         cout << "P2PSIPTestApp: Resolve failed [t=" << simTime() << "]" << endl;
         RECORD_STATS(numGetError++);
-        delete context;
-        return;
-    }
-
-    const SIPEntry* entry = globalP2PSIPTestMap->findEntry(context->id);
-
-    if (entry == NULL) {
-        //unexpected key
-        RECORD_STATS(numGetError++);
-        cout << "P2PSIPTestApp: Resolve failed [t=" << simTime() << "] unexpected key"
-             << endl;
-        delete context;
-        return;
-    }
-
-    if (msg->getAddressArraySize() > 0) {
-        string address(msg->getAddress(0).begin(), msg->getAddress(0).end());
-        if (address == entry->address.str()) {
-            RECORD_STATS(numGetSuccess++);
-            cout << "P2PSIPTestApp: Resolve success [t=" << simTime() << "]" << endl;
-            if (withChallenge) {
-                sendChallenge(context->id, entry->address);
-            }
-            delete context;
-            return;
-        } else {
-            cout << "P2PSIPTestApp: Resolve failed [t=" << simTime() << "] wrong value"
-                 << " expected " << entry->address.str() << ", got " << msg->getAddress(0) << endl;
+    } else if (msg->getAddressArraySize() > 0) {
+        string addressStr(msg->getAddress(0).begin(), msg->getAddress(0).end());
+        IPvXAddress address;
+        if (!address.tryParse(addressStr.c_str()) || globalNodeList->getNodeHandle(address) == NULL) {
             RECORD_STATS(numGetError++);
-            delete context;
-            return;
+            cout << "P2PSIPTestApp: Resolve failed [t=" << simTime() << "] invalid address" << endl;
+        } else if (withChallenge) {
+            sendChallenge(context->id, address);
+        } else {
+            RECORD_STATS(numGetSuccess++);
+            if (address == context->address) {
+                cout << "P2PSIPTestApp: Resolve success [t=" << simTime() << "] correct data" << endl;
+            } else {
+                cout << "P2PSIPTestApp: Resolve success [t=" << simTime() << "] wrong data" << endl;
+            }
         }
     } else {
-        cout << "P2PSIPTestApp: Resolve failed [t=" << simTime() << "] no result"
-             << " expected " << entry->address.str() << endl;
+        cout << "P2PSIPTestApp: Resolve failed [t=" << simTime() << "] no result" << endl;
         RECORD_STATS(numGetError++);
-        delete context;
-        return;
     }
+
+    delete context;
 }
 
 void P2PSIPTestApp::handleChallengeResponse(SIPChallengeResponse* msg, P2PSIPChallengeContext* context) {
-    cout << msg->getIdentifier() << " ------------------------------------------------------------------ " << context->id << endl;
     if (msg->getIdentifier() == context->id) {
+        RECORD_STATS(numGetSuccess++);
         cout << "P2PSIPTestApp: Challenge success [t=" << simTime() << "]" << endl;
     } else {
+        RECORD_STATS(numGetError++);
         cout << "P2PSIPTestApp: Challenge failed [t=" << simTime() << "]" << endl;
     }
     delete context;
@@ -299,6 +282,7 @@ void P2PSIPTestApp::sendRandomResolve()
     if (id == NULL) {
         return;
     }
+    IPvXAddress address = globalP2PSIPTestMap->findEntry(*id)->address;
 
     P2pnsResolveCall* resolveCall = new P2pnsResolveCall();
     resolveCall->setP2pName(BinaryValue(*id));
@@ -308,7 +292,7 @@ void P2PSIPTestApp::sendRandomResolve()
     sendInternalRpcCall(
             TIER2_COMP,
             resolveCall,
-            new P2PSIPStatsContext(globalStatistics->isMeasuring(), simTime(), *id));
+            new P2PSIPStatsContext(globalStatistics->isMeasuring(), simTime(), *id, address));
 }
 
 void P2PSIPTestApp::registerId()
