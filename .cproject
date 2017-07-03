@@ -117,4 +117,5 @@
 			<resource resourceType="PROJECT" workspacePath="/P2PSIPMANET"/>
 		</configuration>
 	</storageModule>
+	<storageModule moduleId="org.eclipse.cdt.make.core.buildtargets"/>
 </cproject>
