@@ -35,8 +35,6 @@
 #include "OneHopOverlay4MANET.h"
 #include "ManetOneHopOverlay4MANET.h"
 
-namespace oversim {
-
 using namespace std;
 
 Define_Module(ManetOneHopOverlay4MANET);
@@ -138,5 +136,3 @@ void ManetOneHopOverlay4MANET::changeState(int toState)
     }
 }
 
-
-}; //namespace

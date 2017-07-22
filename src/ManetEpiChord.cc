@@ -35,8 +35,6 @@
 #include "EpiChord.h"
 #include "ManetEpiChord.h"
 
-namespace oversim {
-
 using namespace std;
 
 Define_Module(ManetEpiChord);
@@ -186,6 +184,3 @@ void ManetEpiChord::changeState(int toState)
         break;
     }
 }
-
-
-}; //namespace

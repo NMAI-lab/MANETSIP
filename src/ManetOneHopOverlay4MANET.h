@@ -33,8 +33,6 @@
 #include "IPv4Route.h"
 #include "INotifiable.h"
 
-namespace oversim {
-
 /**
  * ManetOneHopOverlay4MANET overlay module
  *
@@ -43,7 +41,7 @@ namespace oversim {
  *
  * @see BaseOverlay, OneHopOverlay4MANET, OneHopOverlay4MANETFingerTable
  */
-class ManetOneHopOverlay4MANET : public OneHopOverlay4MANET
+class ManetOneHopOverlay4MANET : public oversim::OneHopOverlay4MANET
 {
 
 
@@ -58,7 +56,5 @@ protected:
 
 
 };
-
-}; //namespace
 
 #endif

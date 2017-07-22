@@ -30,8 +30,6 @@
 #include "EpiChordFingerCache.h"
 #include "EpiChordMessage_m.h"
 
-namespace oversim {
-
 /**
  * ManetEpiChord overlay module
  *
@@ -40,7 +38,7 @@ namespace oversim {
  *
  * @see BaseOverlay, EpiChord, EpiChordFingerTable
  */
-class ManetEpiChord : public EpiChord
+class ManetEpiChord : public oversim::EpiChord
 {
 
 
@@ -55,7 +53,5 @@ protected:
 
 
 };
-
-}; //namespace
 
 #endif

@@ -24,9 +24,6 @@ import oversim.overlay.epichord.EpiChordNodeList;
 import oversim.common.BaseOverlay;
 import oversim.common.IOverlay;
 
-
-@namespace(oversim);
-
 //
 // The main module of the EpiChord implementation
 //
