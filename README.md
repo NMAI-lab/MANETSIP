@@ -6,9 +6,13 @@ The code in this repository is for the OMNET++ simulator and has dependencies on
 
 To install and use:
 - install OMNET++ version 4.6 (see omnetpp.org where the software and install guide can be found).
-- clone projects inetmanet-2.0 and oversim in your working directory (github repos also available from NMAI-lab).
-- clone project MANETSIP into your working directory.
-Import all three projects (file>import>general>existing projects into workspace) from the OMNET++ IDE.
+- clone projects inetmanet-2.0 and oversim MANETSIP in your working directory:
+  ```shell
+  git clone https://github.com/NMAI-lab/inetmanet-2.0
+  git clone https://github.com/NMAI-lab/Oversim-20121206
+  git clone https://github.com/NMAI-lab/MANETSIP
+  ```
+- import all three projects (file>import>general>existing projects into workspace) from the OMNET++ IDE.
 - compile inetmanet (project > build project) then oversim, then MANETSIP (warning: it's slow, particularly for oversim).
-
-- Yay. At this point there is one simulation that can be set up without error. However, the Global Nodelist is not properly updated so as soon as the nodes try to set up a DHT there is an error because the bootstrap mechanism doesn't work.
+  - you might need to fix some settings beforehand for that to work: with the MANETSIP project open, go to Project > Properties > OMNeT++ > Makemake and make sure that the MANETSIP folder is set to build with a custom makefile and that the src folder uses Makemake.
+- explore the `.ini` files in MANETSIP/simulations to see the available simulations.
