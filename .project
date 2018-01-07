@@ -4,6 +4,7 @@
 	<comment></comment>
 	<projects>
 		<project>inetmanet-2.0</project>
+		<project>multichain</project>
 		<project>Oversim-20121206</project>
 	</projects>
 	<buildSpec>
