@@ -80,7 +80,7 @@ INCLUDE_PATH = \
     -I../../Oversim-20121206/src/tier3/xmlrpcinterface \
     -I../../Oversim-20121206/src/tier2/dhttestapp \
     -I. \
-    -ImultichainApp \
+    -ImultichainTestApp \
     -Itestapp
 
 # Additional object and library files to link with
@@ -103,7 +103,7 @@ OBJS = \
     $O/ManetOneHopOverlay4MANET.o \
     $O/ManetEpiChord.o \
     $O/DummyUnderlayConfigurator.o \
-    $O/multichainApp/multichainApp.o \
+    $O/multichainTestApp/multichainApp.o \
     $O/testapp/P2PSIPTestApp.o \
     $O/testapp/GlobalP2PSIPTestMap.o \
     $O/testapp/P2PSIPTestAppMessages_m.o
@@ -188,7 +188,7 @@ clean:
 	$(Q)-rm -rf $O
 	$(Q)-rm -f P2PSIPMANET P2PSIPMANET.exe libP2PSIPMANET.so libP2PSIPMANET.a libP2PSIPMANET.dll libP2PSIPMANET.dylib
 	$(Q)-rm -f ./*_m.cc ./*_m.h
-	$(Q)-rm -f multichainApp/*_m.cc multichainApp/*_m.h
+	$(Q)-rm -f multichainTestApp/*_m.cc multichainTestApp/*_m.h
 	$(Q)-rm -f testapp/*_m.cc testapp/*_m.h
 
 cleanall: clean
@@ -196,7 +196,7 @@ cleanall: clean
 
 depend:
 	$(qecho) Creating dependencies...
-	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES)  ./*.cc multichainApp/*.cc testapp/*.cc
+	$(Q)$(MAKEDEPEND) $(INCLUDE_PATH) -f Makefile -P\$$O/ -- $(MSG_CC_FILES)  ./*.cc multichainTestApp/*.cc testapp/*.cc
 
 # DO NOT DELETE THIS LINE -- make depend depends on it.
 $O/DummyUnderlayConfigurator.o: DummyUnderlayConfigurator.cc \
@@ -528,7 +528,7 @@ $O/ZeroChurn.o: ZeroChurn.cc \
 	$(INETMANET_2_0_PROJ)/src/networklayer/contract/IPv4Address.h \
 	$(INETMANET_2_0_PROJ)/src/networklayer/contract/IPv6Address.h \
 	$(INETMANET_2_0_PROJ)/src/networklayer/contract/IPvXAddress.h
-$O/multichainApp/multichainApp.o: multichainApp/multichainApp.cc \
+$O/multichainTestApp/multichainApp.o: multichainTestApp/multichainApp.cc \
 	$(OVERSIM_20121206_PROJ)/src/common/AbstractLookup.h \
 	$(OVERSIM_20121206_PROJ)/src/common/BaseApp.h \
 	$(OVERSIM_20121206_PROJ)/src/common/BaseOverlay.h \
@@ -554,7 +554,7 @@ $O/multichainApp/multichainApp.o: multichainApp/multichainApp.cc \
 	$(OVERSIM_20121206_PROJ)/src/common/TransportAddress.h \
 	$(OVERSIM_20121206_PROJ)/src/common/Vector2D.h \
 	$(OVERSIM_20121206_PROJ)/src/common/oversim_mapset.h \
-	multichainApp/multichainApp.h \
+	multichainTestApp/multichainApp.h \
 	$(INETMANET_2_0_PROJ)/src/base/Compat.h \
 	$(INETMANET_2_0_PROJ)/src/base/INETDefs.h \
 	$(INETMANET_2_0_PROJ)/src/base/INotifiable.h \
