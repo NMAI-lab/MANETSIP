@@ -33,6 +33,9 @@
 #include "IPv4Route.h"
 #include "INotifiable.h"
 
+/* again namespcae from overhop branch
+namespace oversim {*/
+
 /**
  * ManetOneHopOverlay4MANET overlay module
  *
@@ -41,8 +44,15 @@
  *
  * @see BaseOverlay, OneHopOverlay4MANET, OneHopOverlay4MANETFingerTable
  */
+
+/* another merge conflict 
+<<<<<<< HEAD
 class ManetOneHopOverlay4MANET : public oversim::OneHopOverlay4MANET
+=======
+class ManetOneHopOverlay4MANET : public OneHopOverlay4MANET
+>>>>>>> origin/OneHop
 {
+*/
 
 
 protected:
@@ -56,5 +66,7 @@ protected:
 
 
 };
+
+//}; //namespace from branch overhop
 
 #endif

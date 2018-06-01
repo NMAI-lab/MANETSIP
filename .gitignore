@@ -4,7 +4,6 @@ simulations/results/*
 *.anf
 
 #eclipse and omnetpp files
-.project
 .metadata/*
 .tkenvlog
 .oppbuildspec
@@ -21,8 +20,6 @@ simulations/.tkenvrc
 
 out/*
 out/gcc-debug/src/P2PSIPMANET
-src/P2PSIPMANET
-src/p2psipmanet
 
 # Generated files #
 ###################

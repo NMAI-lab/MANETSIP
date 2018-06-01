@@ -25,6 +25,8 @@ import oversim.common.BaseOverlay;
 import oversim.common.IOverlay;
 import oversim.overlay.onehopoverlay4manet.OneHopOverlay4MANETNodeList;
 
+//@namespace(oversim); from Overhop branch
+
 //
 // The main module of the OneHopOverlay4MANET implementation
 //
