@@ -46,7 +46,6 @@ void ManetEpiChord::changeState(int toState)
     // Defines tasks to be executed when a state change occurs.
     //
 
-
     SimpleInfo* info;
     //SimpleNodeEntry* entry;
 
@@ -95,13 +94,14 @@ void ManetEpiChord::changeState(int toState)
 
 
     case BOOTSTRAP:
+        EV << "inside BOOTSTRAP"<< endl;
         state = BOOTSTRAP;
 
         // initiate bootstrap process
         cancelEvent(join_timer);
         // workaround: prevent notificationBoard from taking
         // ownership of join_timer message
-        take(join_timer);
+        //take(join_timer);
         scheduleAt(simTime(), join_timer);
 
         // debug message
@@ -128,39 +128,8 @@ void ManetEpiChord::changeState(int toState)
         break;
 
 
-        /* case JOIN:
-        state = JOIN;
-
-        // initiate join process
-        cancelEvent(join_timer);
-        // workaround: prevent notificationBoard from taking
-        // ownership of join_timer message
-        take(join_timer);
-        scheduleAt(simTime(), join_timer);
-
-        // debug message
-        if (debugOutput) {
-            EV << "[ManetEpiChord::changeState() @ " << thisNode.getIp()
-            << " (" << thisNode.getKey().toString(16) << ")]\n"
-            << "    Entered JOIN stage"
-            << endl;
-        }
-        getParentModule()->getParentModule()->bubble("Enter JOIN state.");
-
-        // find a new bootstrap node and enroll to the bootstrap list
-        bootstrapNode = bootstrapList->getBootstrapNode(overlayId);
-
-        // is this the first node?
-        if (bootstrapNode.isUnspecified()) {
-            // create new chord ring
-            assert(predecessorNode.isUnspecified());
-            bootstrapNode = thisNode;
-            changeState(READY);
-            updateTooltip();
-        }
-        break;*/
-
     case READY:
+        EV << "inside READY"<< endl;
         state = READY;
 
         setOverlayReady(true);

@@ -1,0 +1,8 @@
+please check:
+src/Manetchord.cc, bottom 1 fix required
+src/ManetOneHopOverlay4MANET.cc, 1 fix
+ManetONeHopOverlay4MANET.h,  3 fixes required
++.ned, 1 fix
+
+almost all because of namespace
+

@@ -58,7 +58,11 @@ module Host extends NodeBase
         
         volatile string bgColor = default("green");
         @node;
+//<<<<<<< HEAD
         @display("bgb=537,472;i=device/cellphone,$bgColor");
+//=======
+//        @display("bgb=607,485;i=device/cellphone");
+//>>>>>>> origin/OneHop
         networkLayer.configurator.networkConfiguratorModule = ""; // parameter for IPv4NetworkLayer (the default value of networkLayer)
         string routingProtocol = default("inet.networklayer.manetrouting.OLSR");
         IPForward = true;
@@ -69,13 +73,13 @@ module Host extends NodeBase
     gates:
         input overlayNeighborArrowIn[]; // incoming gate for visualizing overlay neighborship with connection arrows
         output overlayNeighborArrowOut[]; // incoming gate for visualizing overlay neighborship with connection arrows
-        
+
 
     submodules:
         tier3: <tier3Type> like ITier {
             parameters:
                 @display("p=96,44");
-       }
+        }
         tier2: <tier2Type> like ITier {
             parameters:
                 @display("p=202,44");
@@ -96,22 +100,22 @@ module Host extends NodeBase
             parameters:
                 @display("p=255,225");
         }
-        
+
         neighborCache: NeighborCache { //needed along with bootstraplist
             parameters:
-                @display("p=179,305");
+                @display("p=135,256");
         }
 
         bootstrapList: BootstrapList {
             parameters:
-                @display("p=168,311");
+                @display("p=135,318");
         }
         cryptoModule: CryptoModule { //needed with neighborcache
             parameters:
-                @display("p=158,248");
+                @display("p=135,186");
         }
         ac_wlan: HostAutoConfigurator {
-            @display("p=171,335");
+            @display("p=194,318");
         }
 
         manetrouting: <routingProtocol> like IManetRouting {

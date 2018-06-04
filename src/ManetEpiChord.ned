@@ -45,7 +45,7 @@ simple ManetEpiChord extends EpiChord
 module ManetEpiChordModules like IOverlay
 {
     parameters:
-        @display("i=block/network2");
+        @display("i=block/network2;bgb=434,220");
 
     gates:
         input udpIn;   // gate from the UDP layer
@@ -70,7 +70,11 @@ module ManetEpiChordModules like IOverlay
         }
         predecessorList: EpiChordNodeList {
             parameters:
-                @display("p=240,60");
+                @display("p=345,60");
+        }
+        cacheList: EpiChordNodeList {
+            parameters:
+                @display("p=279,144");
         }
     connections allowunconnected:
         udpIn --> epichord.udpIn;
